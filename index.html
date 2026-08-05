@@ -1,0 +1,1840 @@
+<title>CRM Bless Ótica</title>
+
+<style>
+  /* Tokens: mesma base do CRM da Meal Time. Só o bloco --brand muda por cliente. */
+  :root {
+    --bg: #f5f6f8;
+    --bg-deep: #ffffff;
+    --surface: #ffffff;
+    --surface-tint: #f1f3f5;
+    --line: rgba(17, 19, 28, 0.08);
+    --line-strong: rgba(17, 19, 28, 0.15);
+    --text: #16181d;
+    --muted: #565d6a;
+    --muted-soft: #6b7280;
+
+    --brand: #0d6157;
+    --brand-deep: #094a43;
+    --brand-soft: rgba(13, 97, 87, 0.09);
+    --brand-ink: var(--brand);
+    --on-brand: #ffffff;
+
+    --ok: #16a34a;   --ok-soft: rgba(22,163,74,.10);   --ok-ink: #136c34;
+    --warn: #b45309; --warn-soft: rgba(180,83,9,.10);  --warn-ink: #92400e;
+    --danger: #dc2626; --danger-soft: rgba(220,38,38,.10); --danger-ink: #b3261e;
+    --info-soft: rgba(37,99,235,.10); --info-ink: #1d4ed8;
+
+    --shadow-sm: 0 1px 2px rgba(17,19,28,.05);
+    --shadow: 0 1px 3px rgba(17,19,28,.04), 0 10px 28px rgba(17,19,28,.07);
+    --r-xl: 16px; --r-lg: 13px; --r-md: 10px; --r-sm: 8px; --r-pill: 999px;
+
+    --sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1013; --bg-deep: #0a0c0f; --surface: #16191f; --surface-tint: #21252d;
+      --line: rgba(255,255,255,.09); --line-strong: rgba(255,255,255,.17);
+      --text: #eef0f4; --muted: #a2a9b6; --muted-soft: #a5adba;
+      --brand-soft: rgba(45,190,172,.15); --brand-ink: #eef0f4;
+      --ok-soft: rgba(22,163,74,.16); --ok-ink: #4ade80;
+      --warn-soft: rgba(180,83,9,.18); --warn-ink: #fbbf24;
+      --danger-soft: rgba(220,38,38,.16); --danger-ink: #f87171;
+      --info-soft: rgba(37,99,235,.20); --info-ink: #93b4fd;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1013; --bg-deep: #0a0c0f; --surface: #16191f; --surface-tint: #21252d;
+    --line: rgba(255,255,255,.09); --line-strong: rgba(255,255,255,.17);
+    --text: #eef0f4; --muted: #a2a9b6; --muted-soft: #a5adba;
+    --brand-soft: rgba(45,190,172,.15); --brand-ink: #eef0f4;
+    --ok-soft: rgba(22,163,74,.16); --ok-ink: #4ade80;
+    --warn-soft: rgba(180,83,9,.18); --warn-ink: #fbbf24;
+    --danger-soft: rgba(220,38,38,.16); --danger-ink: #f87171;
+    --info-soft: rgba(37,99,235,.20); --info-ink: #93b4fd;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+    --shadow: 0 1px 3px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.28);
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f6f8; --bg-deep: #ffffff; --surface: #ffffff; --surface-tint: #f1f3f5;
+    --line: rgba(17,19,28,.08); --line-strong: rgba(17,19,28,.15);
+    --text: #16181d; --muted: #565d6a; --muted-soft: #6b7280;
+    --brand-soft: rgba(13,97,87,.09); --brand-ink: var(--brand);
+    --ok-soft: rgba(22,163,74,.10); --ok-ink: #136c34;
+    --warn-soft: rgba(180,83,9,.10); --warn-ink: #92400e;
+    --danger-soft: rgba(220,38,38,.10); --danger-ink: #b3261e;
+    --info-soft: rgba(37,99,235,.10); --info-ink: #1d4ed8;
+    --shadow-sm: 0 1px 2px rgba(17,19,28,.05);
+    --shadow: 0 1px 3px rgba(17,19,28,.04), 0 10px 28px rgba(17,19,28,.07);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14.5px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  h1,h2,h3,h4 { font-family: var(--display); margin: 0; font-weight: 700; letter-spacing: -0.015em; }
+  p { margin: 0; }
+  button { font-family: inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  .eyebrow { font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .muted { color: var(--muted-soft); }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---------- demobar ---------- */
+  .demobar {
+    background: #101318; color: #dfe3ea; padding: .5rem 1rem;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem; font-size: .78rem;
+  }
+  .demobar .tag { font-family: var(--mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.35); border-radius: var(--r-pill); padding: .08rem .48rem; }
+  .demobar .spacer { flex: 1 1 auto; }
+  .demobar .db-btn { font-size: .74rem; background: transparent; color: inherit; border: 1px solid rgba(255,255,255,.3); border-radius: var(--r-pill); padding: .24rem .68rem; cursor: pointer; }
+  .demobar .db-btn[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+  .demobar .swatch { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+  .demobar .swatch[aria-pressed="true"] { border-color: #dfe3ea; }
+  .swatches { display: flex; gap: .32rem; align-items: center; }
+
+  /* ---------- shell ---------- */
+  .shell { display: grid; grid-template-columns: 232px 1fr; align-items: start; min-height: calc(100vh - 34px); }
+
+  .sidebar {
+    background: var(--bg-deep); border-right: 1px solid var(--line);
+    padding: 1rem .75rem; position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column; gap: 1.1rem; overflow-y: auto;
+  }
+  .brand-row { display: flex; align-items: center; gap: .6rem; padding: .15rem .4rem .55rem; border-bottom: 1px solid var(--line); }
+  .brand-mark {
+    width: 36px; height: 36px; flex: none; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+    color: var(--on-brand); display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 1rem;
+  }
+  .brand-name { font-family: var(--display); font-weight: 700; font-size: .95rem; line-height: 1.15; }
+  .brand-sub { font-size: .7rem; color: var(--muted-soft); }
+
+  .side-label { padding: 0 .5rem; margin-bottom: .35rem; }
+  .nav { display: flex; flex-direction: column; gap: .1rem; }
+  .nav-link {
+    display: flex; align-items: center; gap: .6rem; padding: .48rem .55rem;
+    border-radius: var(--r-sm); color: var(--muted); font-size: .85rem; font-weight: 500;
+    border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;
+  }
+  .nav-link:hover { background: var(--surface-tint); color: var(--text); }
+  .nav-link.is-active { background: var(--brand-soft); color: var(--brand-ink); font-weight: 700; box-shadow: inset 2.5px 0 0 var(--brand); }
+  .nav-link svg { width: 15px; height: 15px; flex: none; opacity: .85; }
+  .nav-count { margin-left: auto; font-family: var(--mono); font-size: .64rem; background: var(--danger-soft); color: var(--danger-ink); border-radius: var(--r-pill); padding: .02rem .38rem; }
+  .nav-count.is-brandish { background: var(--brand-soft); color: var(--brand-ink); }
+
+  .user-card {
+    margin-top: auto; display: flex; align-items: center; gap: .55rem;
+    border: 1px solid var(--line); border-radius: var(--r-md); padding: .5rem .6rem; background: var(--surface);
+  }
+  .user-card .avatar { width: 28px; height: 28px; }
+  .user-card b { font-size: .8rem; display: block; }
+  .user-card small { font-size: .68rem; color: var(--muted-soft); }
+
+  /* ---------- appbar ---------- */
+  .main { min-width: 0; }
+  .appbar {
+    display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+    padding: .7rem 1.3rem; border-bottom: 1px solid var(--line);
+    background: var(--bg-deep); position: sticky; top: 0; z-index: 40;
+  }
+  .appbar-title { font-size: .98rem; }
+  .appbar .spacer { flex: 1 1 auto; }
+  .search-trigger {
+    display: flex; align-items: center; gap: .5rem; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--r-pill);
+    padding: .36rem .5rem .36rem .75rem; color: var(--muted-soft); cursor: pointer;
+    font-size: .8rem; min-width: 15rem;
+  }
+  .search-trigger svg { width: 14px; height: 14px; }
+  .search-trigger kbd { margin-left: auto; font-family: var(--mono); font-size: .65rem; border: 1px solid var(--line-strong); border-radius: 5px; padding: .04rem .3rem; }
+  .icon-btn { width: 31px; height: 31px; border-radius: var(--r-sm); display: grid; place-items: center; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); cursor: pointer; }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .user-chip { font-size: .76rem; color: var(--muted-soft); }
+
+  .content { padding: 1.15rem 1.3rem 4rem; }
+
+  /* ---------- botoes ---------- */
+  .btn, .btn-ghost, .btn-danger {
+    font-size: .79rem; font-weight: 700; border-radius: var(--r-sm);
+    padding: .42rem .8rem; cursor: pointer; white-space: nowrap;
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--text);
+    display: inline-flex; align-items: center; gap: .35rem;
+  }
+  .btn { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+  .btn:hover { background: var(--brand-deep); }
+  .btn-ghost:hover { background: var(--surface-tint); }
+  .btn-danger { color: var(--danger-ink); }
+  .link-btn { color: var(--brand-ink); font-weight: 700; background: none; border: none; cursor: pointer; font-size: .79rem; padding: 0; }
+
+  /* ---------- panels / chips ---------- */
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); padding: 1.05rem 1.1rem; margin-bottom: .95rem; }
+  .panel-head { display: flex; align-items: flex-end; justify-content: space-between; gap: .9rem; margin-bottom: .85rem; flex-wrap: wrap; }
+  .panel-head h3 { font-size: 1rem; }
+  .view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: .9rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .view-head h2 { font-size: 1.25rem; }
+  .view-actions { display: flex; gap: .45rem; flex-wrap: wrap; }
+
+  .chip { display: inline-flex; align-items: center; gap: .28rem; font-size: .72rem; font-weight: 700; padding: .15rem .55rem; border-radius: var(--r-pill); background: var(--surface-tint); color: var(--muted); white-space: nowrap; }
+  .chip.is-ok { background: var(--ok-soft); color: var(--ok-ink); }
+  .chip.is-warn { background: var(--warn-soft); color: var(--warn-ink); }
+  .chip.is-danger { background: var(--danger-soft); color: var(--danger-ink); }
+  .chip.is-info { background: var(--info-soft); color: var(--info-ink); }
+  .chip.is-brand { background: var(--brand-soft); color: var(--brand-ink); }
+
+  /* ---------- kpis ---------- */
+  .kpi-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr)); gap: .85rem; margin-bottom: .95rem; }
+  .kpi-tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); padding: .95rem 1.05rem; display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; align-items: end; }
+  .kpi-tile .k-label { grid-column: 1 / -1; font-size: .76rem; color: var(--muted); font-weight: 600; }
+  .kpi-tile .k-val { font-family: var(--display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .kpi-tile .k-delta { grid-column: 1 / -1; font-size: .72rem; font-family: var(--mono); }
+  .k-delta.up { color: var(--ok-ink); } .k-delta.down { color: var(--danger-ink); } .k-delta.flat { color: var(--muted-soft); }
+  .kpi-tile svg { width: 72px; height: 26px; }
+  .kpi-tile polyline { fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- avisos / quick ---------- */
+  .notice-strip { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: .95rem; }
+  .notice { display: inline-flex; align-items: center; gap: .4rem; font-size: .77rem; font-weight: 600; padding: .36rem .7rem; border-radius: var(--r-pill); border: none; cursor: pointer; }
+  .notice.crit { background: var(--danger-soft); color: var(--danger-ink); }
+  .notice.warn { background: var(--warn-soft); color: var(--warn-ink); }
+  .notice.info { background: var(--info-soft); color: var(--info-ink); }
+
+  .quick-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .8rem; margin-bottom: .95rem; }
+  .quick-card { display: grid; gap: 3px; padding: 14px 16px; text-align: left; border-radius: var(--r-xl); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow-sm); cursor: pointer; }
+  .quick-card:hover { border-color: var(--brand); }
+  .quick-card .qi { width: 26px; height: 26px; border-radius: var(--r-sm); display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-ink); margin-bottom: 2px; }
+  .quick-card .qi svg { width: 14px; height: 14px; }
+  .quick-card strong { font-size: .87rem; }
+  .quick-card small { font-size: .74rem; color: var(--muted-soft); }
+
+  .focus-strip { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; background: var(--brand-soft); border-radius: var(--r-lg); padding: .8rem 1rem; margin-bottom: .95rem; }
+  .focus-strip strong { font-size: .9rem; }
+  .focus-strip p { font-size: .82rem; color: var(--muted); }
+
+  /* ---------- summary cards ---------- */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: .8rem; }
+  .s-card { border: 1px solid var(--line); border-radius: var(--r-xl); background: var(--surface); min-height: 178px; display: grid; grid-template-rows: auto auto 1fr auto; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .s-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--brand); }
+  .s-head { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .85rem .95rem .45rem; }
+  .s-head h4 { font-size: .9rem; display: flex; align-items: center; gap: .45rem; }
+  .s-head h4 svg { width: 14px; height: 14px; color: var(--brand-ink); opacity: .9; }
+  .s-badges { display: flex; flex-wrap: wrap; gap: .32rem; padding: 0 .95rem .45rem; }
+  .s-mini { font-size: .72rem; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-pill); padding: .13rem .5rem; color: var(--muted); cursor: pointer; }
+  .s-mini strong { color: var(--text); font-family: var(--mono); }
+  .s-list { display: flex; flex-direction: column; padding: 0 .45rem; }
+  .s-line { text-align: left; background: none; border: none; cursor: pointer; font-size: .81rem; color: var(--muted); padding: .34rem .5rem; border-radius: var(--r-sm); }
+  .s-line:hover { background: var(--surface-tint); color: var(--text); }
+  .s-foot { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; padding: .55rem .95rem .85rem; border-top: 1px solid var(--line); margin-top: .45rem; }
+
+  /* ---------- filtros ---------- */
+  .toolbar { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-bottom: .7rem; }
+  .fcount { display: inline-grid; place-items: center; margin-left: .35rem; min-width: 16px; height: 16px; padding: 0 4px; border-radius: var(--r-pill); background: var(--brand); color: var(--on-brand); font-size: .64rem; font-family: var(--mono); }
+  .search-box { display: flex; align-items: center; gap: .45rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: .34rem .6rem; flex: 1; min-width: 13rem; }
+  .search-box input { border: none; background: transparent; outline: none; color: var(--text); font: inherit; font-size: .82rem; width: 100%; }
+  .search-box svg { width: 14px; height: 14px; color: var(--muted-soft); flex: none; }
+
+  .filter-panel { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg); padding: .9rem 1rem; margin-bottom: .8rem; }
+  .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr)); gap: .85rem 1rem; }
+  .fg-wide { grid-column: 1 / -1; }
+  .filter-grid label, .f-label { display: block; font-size: .66rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; margin-bottom: .38rem; }
+  .fchips { display: flex; flex-wrap: wrap; gap: .32rem; }
+  .fchip { font-size: .78rem; font-weight: 500; padding: 5px 11px; border-radius: var(--r-pill); border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+  .fchip:hover { border-color: var(--brand); color: var(--text); }
+  .fchip.is-active { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 600; }
+  .fchip .lc { font-family: var(--mono); font-size: .64rem; background: var(--danger-soft); color: var(--danger-ink); border-radius: var(--r-pill); padding: 0 .3rem; margin-left: .22rem; }
+  .fchip.is-active .lc { background: rgba(255,255,255,.25); color: var(--on-brand); }
+  .frange { display: flex; align-items: center; gap: .4rem; }
+  .frange input, .fselect { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: .32rem .5rem; color: var(--text); font: inherit; font-size: .8rem; min-width: 0; width: 100%; }
+  .factions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .85rem; }
+
+  /* ---------- tabelas ---------- */
+  .twrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); }
+  table.tbl { width: 100%; border-collapse: collapse; font-size: .83rem; }
+  .tbl thead th { text-align: left; font-size: .64rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: .6rem .65rem; background: var(--surface-tint); white-space: nowrap; border-bottom: 1px solid var(--line); }
+  .tbl tbody td { padding: .58rem .65rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .tbl tbody tr:last-child td { border-bottom: none; }
+  .tbl tbody tr:hover { background: var(--surface-tint); }
+  .tbl .td-r { text-align: right; }
+  .tbl thead .td-r { text-align: right; }
+  .th-sort { background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer; display: inline-flex; gap: .25rem; align-items: center; text-transform: inherit; letter-spacing: inherit; }
+  .cel-nome { font-weight: 700; }
+  .cel-sub { font-size: .73rem; color: var(--muted-soft); font-weight: 400; }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; gap: .7rem; flex-wrap: wrap; padding-top: .75rem; font-size: .78rem; color: var(--muted-soft); }
+  .pager { display: flex; gap: .3rem; }
+  .pager button { min-width: 27px; height: 27px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; font-size: .76rem; font-weight: 600; }
+  .pager button.is-active { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+
+  .bulkbar { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; background: var(--brand-soft); border-radius: var(--r-pill); padding: .28rem .5rem .28rem .8rem; font-size: .77rem; font-weight: 700; color: var(--brand-ink); }
+
+  /* ---------- ficha ---------- */
+  .profile-head { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: flex-start; padding-bottom: .9rem; border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
+  .profile-name { font-size: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .profile-meta { display: flex; flex-wrap: wrap; gap: .3rem 1.05rem; margin-top: .3rem; font-size: .8rem; color: var(--muted); }
+  .profile-meta em { font-style: normal; color: var(--muted-soft); font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-right: .25rem; }
+  .profile-badges { display: flex; flex-wrap: wrap; gap: .32rem; margin-top: .55rem; }
+  .profile-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .more-menu { position: relative; }
+  .more-menu > summary { list-style: none; font-size: .79rem; font-weight: 700; border-radius: var(--r-sm); padding: .42rem .8rem; cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface); }
+  .more-menu > summary::-webkit-details-marker { display: none; }
+  .more-pop { position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 15rem; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-md); box-shadow: var(--shadow); padding: .3rem; display: flex; flex-direction: column; }
+  .more-item { text-align: left; background: none; border: none; cursor: pointer; color: var(--text); font-size: .82rem; padding: .4rem .55rem; border-radius: var(--r-sm); }
+  .more-item:hover { background: var(--surface-tint); }
+
+  .ficha-layout { display: grid; grid-template-columns: 16.5rem 1fr; gap: 1rem; align-items: start; }
+  .ficha-side { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.1rem; position: sticky; top: 4.2rem; }
+  .fs-title { font-size: .88rem; margin-bottom: .8rem; }
+  .fs-items { display: flex; flex-direction: column; gap: .8rem; }
+  .fs-item { display: flex; flex-direction: column; gap: .06rem; }
+  .fs-label { font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; }
+  .fs-item strong { font-size: .95rem; font-family: var(--display); }
+  .fs-item small { font-size: .72rem; color: var(--muted-soft); }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .95rem; }
+  .tab { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-weight: 700; font-size: .78rem; cursor: pointer; }
+  .tab:hover { border-color: var(--brand); }
+  .tab.is-active { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: .8rem .95rem; }
+  .info-item { display: flex; flex-direction: column; gap: .05rem; }
+  .info-item label { font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; }
+  .info-item span { font-size: .85rem; font-weight: 500; }
+
+  .hist-entry { display: grid; grid-template-columns: 6rem 1fr auto; gap: .3rem .9rem; padding: .65rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .hist-entry:last-child { border-bottom: none; }
+  .he-type { font-weight: 700; font-size: .85rem; }
+  .he-date { font-family: var(--mono); font-size: .73rem; color: var(--muted-soft); }
+  .he-note { font-size: .8rem; color: var(--muted); grid-column: 2 / -1; }
+
+  .ai-block { background: var(--brand-soft); border-radius: var(--r-lg); padding: .95rem 1.05rem; display: flex; flex-direction: column; gap: .65rem; }
+  .ai-block p { font-size: .86rem; }
+  .ai-label { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--brand-ink); }
+  .msg-preview { font-size: .85rem; background: var(--surface-tint); border-radius: var(--r-md); padding: .8rem .9rem; border-left: 3px solid var(--brand); }
+
+  .incompleto { display: block; width: 100%; text-align: left; background: var(--warn-soft); color: var(--warn-ink); border: none; border-radius: var(--r-md); padding: .55rem .8rem; font-size: .8rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; }
+
+  /* ---------- tarefas / calendario ---------- */
+  .task-row { display: flex; align-items: center; gap: .7rem; padding: .62rem 0; border-bottom: 1px solid var(--line); }
+  .task-row:last-child { border-bottom: none; }
+  .task-row .grow { flex: 1; min-width: 0; }
+  .t-title { font-size: .85rem; font-weight: 600; }
+  .t-sub { font-size: .74rem; color: var(--muted-soft); }
+  .task-done .t-title { text-decoration: line-through; color: var(--muted-soft); }
+  .tcheck { width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--surface); cursor: pointer; flex: none; padding: 0; }
+  .tcheck.done { background: var(--brand); border-color: var(--brand); position: relative; }
+  .tcheck.done::after { content: "✓"; color: var(--on-brand); font-size: .7rem; position: absolute; inset: 0; display: grid; place-items: center; }
+
+  .cal-nav { display: flex; align-items: center; gap: .4rem; }
+  .cal-nav button { width: 25px; height: 25px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; text-align: center; padding-bottom: .3rem; }
+  .cal-day { aspect-ratio: 1/1; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: .76rem; font-family: var(--mono); color: var(--muted); cursor: pointer; min-height: 32px; padding: 0; }
+  .cal-day.is-out { opacity: .3; pointer-events: none; }
+  .cal-day.is-today { border-color: var(--brand); color: var(--brand-ink); font-weight: 700; }
+  .cal-day.is-sel { background: var(--brand-soft); border-color: var(--brand); }
+  .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--brand); }
+  .cal-dot.crit { background: var(--danger); }
+
+  /* ---------- rotas / regras ---------- */
+  .route-item { display: flex; align-items: center; gap: .75rem; padding: .68rem 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .route-item:last-child { border-bottom: none; }
+  .route-time { font-family: var(--mono); font-size: .78rem; font-weight: 700; color: var(--brand-ink); background: var(--brand-soft); border-radius: var(--r-sm); padding: .18rem .45rem; flex: none; }
+  .route-item .grow { flex: 1; min-width: 12rem; }
+
+  .rule { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+  .rule:last-child { border-bottom: none; }
+  .rule .grow { flex: 1; min-width: 12rem; font-size: .85rem; }
+  .when-pill { font-family: var(--mono); font-size: .73rem; background: var(--surface-tint); border-radius: var(--r-sm); padding: .18rem .5rem; white-space: nowrap; color: var(--muted); }
+  .switch { width: 33px; height: 19px; border-radius: 999px; background: var(--brand); position: relative; flex: none; cursor: pointer; border: none; padding: 0; }
+  .switch.off { background: var(--line-strong); }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: #fff; transition: left .15s ease; }
+  .switch:not(.off)::after { left: 17px; }
+
+  .avatar { width: 29px; height: 29px; flex: none; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; font-weight: 700; font-size: .7rem; font-family: var(--display); }
+
+  .minibar { height: 7px; border-radius: 999px; background: var(--surface-tint); overflow: hidden; min-width: 60px; }
+  .minibar > i { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
+
+  /* ---------- dialogs / palette / toasts ---------- */
+  dialog { border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--surface); color: var(--text); padding: 0; max-width: 30rem; width: calc(100vw - 2rem); box-shadow: var(--shadow); }
+  dialog::backdrop { background: rgba(8, 10, 12, .5); }
+  .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .9rem 1.1rem; border-bottom: 1px solid var(--line); }
+  .dlg-head h3 { font-size: .98rem; }
+  .dlg-close { background: none; border: none; color: var(--muted-soft); font-size: 1.1rem; cursor: pointer; line-height: 1; padding: .2rem; }
+  .dlg-body { padding: 1rem 1.1rem; display: grid; gap: .75rem; }
+  .dlg-body .two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .dlg-body label { display: block; font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; margin-bottom: .3rem; }
+  .dlg-body input, .dlg-body select { background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-sm); padding: .45rem .55rem; color: var(--text); font: inherit; font-size: .84rem; width: 100%; }
+  .dlg-foot { display: flex; justify-content: flex-end; gap: .5rem; padding: .85rem 1.1rem; border-top: 1px solid var(--line); }
+
+  #paletteDlg { max-width: 34rem; }
+  .pal-input { display: flex; align-items: center; gap: .55rem; padding: .85rem 1.1rem; border-bottom: 1px solid var(--line); }
+  .pal-input svg { width: 15px; height: 15px; color: var(--muted-soft); }
+  .pal-input input { flex: 1; border: none; background: transparent; outline: none; color: var(--text); font: inherit; font-size: .95rem; }
+  .pal-results { max-height: 20rem; overflow-y: auto; padding: .4rem; }
+  .pal-group { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-soft); font-weight: 700; padding: .5rem .6rem .25rem; }
+  .pal-item { display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: .45rem .6rem; border-radius: var(--r-sm); color: var(--text); font-size: .85rem; }
+  .pal-item:hover, .pal-item.is-focus { background: var(--surface-tint); }
+  .pal-item .sub { margin-left: auto; font-size: .72rem; color: var(--muted-soft); }
+
+  #toasts { position: fixed; right: 1rem; bottom: 1rem; display: flex; flex-direction: column; gap: .5rem; z-index: 100; }
+  .toast { background: var(--text); color: var(--bg); font-size: .82rem; font-weight: 600; border-radius: var(--r-md); padding: .6rem .9rem; box-shadow: var(--shadow); max-width: 22rem; animation: toastIn .18s ease; }
+  .toast.ok { border-left: 3px solid var(--ok); }
+  .toast.warn { border-left: 3px solid var(--warn); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- diff notes ---------- */
+  .d-note { display: none; }
+  body.show-diff .d-note { display: block; margin: .7rem 0 0; font-size: .78rem; line-height: 1.5; color: var(--warn-ink); background: var(--warn-soft); border-radius: var(--r-md); padding: .5rem .7rem; }
+
+  .view { display: none; }
+  .view.is-active { display: block; }
+
+  @media (max-width: 1020px) { .ficha-layout { grid-template-columns: 1fr; } .ficha-side { position: static; } }
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    .nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+    .user-card { margin-top: .4rem; }
+    .content { padding: 1rem .85rem 3rem; }
+    .search-trigger { min-width: 0; flex: 1; }
+  }
+</style>
+
+<div class="demobar">
+  <span class="tag">Demonstração</span>
+  <span>Amostra fictícia de 14 clientes. Mesma engenharia do CRM em produção na Meal Time.</span>
+  <span class="spacer"></span>
+  <span class="swatches" title="Cor da marca">
+    <button class="swatch" data-brand="#0d6157" style="background:#0d6157" aria-pressed="true" aria-label="Verde petróleo"></button>
+    <button class="swatch" data-brand="#1d4ed8" style="background:#1d4ed8" aria-pressed="false" aria-label="Azul"></button>
+    <button class="swatch" data-brand="#7c2d92" style="background:#7c2d92" aria-pressed="false" aria-label="Roxo"></button>
+    <button class="swatch" data-brand="#b45309" style="background:#b45309" aria-pressed="false" aria-label="Âmbar"></button>
+  </span>
+  <button class="db-btn" id="diffBtn" type="button" aria-pressed="false">Mostrar o que mudou</button>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand-row">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">Bless Ótica</div>
+        <div class="brand-sub">CRM · Atendimento</div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow side-label">Navegação</div>
+      <nav class="nav" id="mainNav"></nav>
+    </div>
+    <div class="user-card">
+      <span class="avatar">CA</span>
+      <div><b>Camila</b><small>Atendimento · Loja Centro</small></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="appbar">
+      <h1 class="appbar-title" id="appbarTitle">Resumo</h1>
+      <span class="spacer"></span>
+      <button class="search-trigger" id="paletteTrigger" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Buscar cliente, OS, tarefa...</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <span class="user-chip">Terça, 4 de agosto</span>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Alternar tema claro/escuro" title="Tema">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+
+    <div class="content">
+
+      <section class="view is-active" data-view="resumo">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Bless Ótica CRM</p>
+            <h2>Bom dia, Camila</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="csv-clientes" type="button">Exportar Excel</button>
+            <button class="btn" data-act="novo-cliente" type="button">Novo cliente</button>
+          </div>
+        </div>
+        <div class="notice-strip" id="noticeStrip"></div>
+        <div class="quick-row" id="quickRow"></div>
+        <div class="kpi-band" id="kpiBand"></div>
+        <div class="focus-strip" id="focusStrip"></div>
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="d-note"><b>Os quadros mudam 100%.</b> Na Meal Time são pedidos da semana, kits e cashback. Aqui: janela de troca, orçamento parado, laboratório, garantia e segundo par. A estrutura do card (título, selo, atalhos, lista clicável) é a mesma do CRM em produção.</div>
+        <section class="panel" style="margin-top:.95rem;">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Execução</p>
+              <h3>Desempenho por atendente</h3>
+            </div>
+            <span class="chip">Vendas de 2026</span>
+          </div>
+          <div class="twrap" id="vendorWrap"></div>
+        </section>
+      </section>
+
+      <section class="view" data-view="tarefas">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Agenda</p>
+            <h2>Tarefas</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn" data-act="nova-tarefa" type="button">Nova tarefa</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr minmax(16rem,22rem);gap:.95rem;align-items:start;" id="tarefasGrid">
+          <section class="panel" style="margin:0;">
+            <div class="toolbar" id="taskTabs"></div>
+            <div class="twrap" id="taskTableWrap"></div>
+          </section>
+          <section class="panel" style="margin:0;">
+            <div class="panel-head" style="margin-bottom:.6rem;">
+              <div>
+                <p class="eyebrow">Calendário</p>
+                <h3 id="calLabel"></h3>
+              </div>
+              <div class="cal-nav">
+                <button id="calPrev" type="button" aria-label="Mês anterior">‹</button>
+                <button id="calNext" type="button" aria-label="Próximo mês">›</button>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <p class="muted" style="font-size:.72rem;margin-top:.55rem;">Clique num dia para filtrar as tarefas. Ponto vermelho = atrasada.</p>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-view="clientes">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Base</p>
+            <h2>Clientes <span class="chip" id="cliCount"></span></h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="csv-clientes" type="button">Exportar Excel</button>
+            <button class="btn" data-act="novo-cliente" type="button">Novo cliente</button>
+          </div>
+        </div>
+        <section class="panel">
+          <div class="toolbar">
+            <div class="fchips" id="storeChips"></div>
+            <span class="spacer" style="flex:1"></span>
+            <button class="btn-ghost" id="filtersToggle" type="button" aria-expanded="true">Filtros<span class="fcount" id="fcount" hidden>0</span></button>
+          </div>
+          <div class="filter-panel" id="filterPanel">
+            <div class="filter-grid">
+              <div class="fg-wide">
+                <span class="f-label">Situação</span>
+                <div class="fchips" id="situChips"></div>
+              </div>
+              <div class="fg-wide">
+                <span class="f-label">Tipo de lente</span>
+                <div class="fchips" id="tipoChips"></div>
+              </div>
+              <div>
+                <label for="fMarca">Marca da lente</label>
+                <select class="fselect" id="fMarca">
+                  <option value="all">Todas as marcas</option>
+                  <option>Varilux</option><option>Zeiss</option><option>Hoya</option><option>Outras</option>
+                </select>
+              </div>
+              <div>
+                <label>Ticket da última compra (R$)</label>
+                <div class="frange">
+                  <input type="number" id="fTMin" placeholder="mín" min="0" step="50" aria-label="Ticket mínimo">
+                  <span>a</span>
+                  <input type="number" id="fTMax" placeholder="máx" min="0" step="50" aria-label="Ticket máximo">
+                </div>
+              </div>
+              <div>
+                <label>Meses desde a última compra</label>
+                <div class="frange">
+                  <input type="number" id="fMMin" placeholder="mín" min="0" aria-label="Meses mínimo">
+                  <span>a</span>
+                  <input type="number" id="fMMax" placeholder="máx" min="0" aria-label="Meses máximo">
+                </div>
+              </div>
+              <div>
+                <label for="fOrd">Ordenar por</label>
+                <select class="fselect" id="fOrd">
+                  <option value="urgencia">Mais urgente primeiro</option>
+                  <option value="ult">Última compra (recente)</option>
+                  <option value="ticket">Maior ticket</option>
+                  <option value="ltv">Maior LTV</option>
+                  <option value="nome">Nome (A a Z)</option>
+                </select>
+              </div>
+            </div>
+            <div class="factions">
+              <button class="btn-ghost" data-act="limpar-filtros" type="button">Limpar filtros</button>
+              <button class="btn" data-act="aplicar-filtros" type="button">Aplicar</button>
+            </div>
+            <div class="d-note"><b>Mesmo painel de filtros do CRM da Meal Time</b> (chips de situação, faixas, ordenação). Os recortes é que viram de ótica: janela de troca, marca da lente, garantia e segundo par no lugar de kit, cashback e unidade.</div>
+          </div>
+          <div class="toolbar">
+            <label class="search-box">
+              <span class="sr-only">Buscar cliente</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="cliBusca" placeholder="Buscar por nome, telefone ou bairro..." autocomplete="off">
+            </label>
+            <div class="bulkbar" id="bulkBar" hidden>
+              <span id="bulkCount"></span>
+              <button class="btn-ghost" data-act="bulk-tarefa" type="button">Criar tarefas</button>
+              <button class="btn-ghost" data-act="bulk-campanha" type="button">Campanha WhatsApp</button>
+            </div>
+          </div>
+          <div class="twrap" id="cliTableWrap"></div>
+          <div class="pagination" id="cliPag"></div>
+        </section>
+      </section>
+
+      <section class="view" data-view="ficha">
+        <section class="panel" id="fichaPanel"></section>
+      </section>
+
+      <section class="view" data-view="movel">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Atendimento externo</p>
+            <h2>Ótica Móvel</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="toast" data-msg="Mapa da rota aberto (recurso da versão final)." type="button">Ver mapa</button>
+            <button class="btn" data-act="montar-roteiro" type="button">Montar roteiro</button>
+          </div>
+        </div>
+        <div id="movelContent"></div>
+      </section>
+
+      <section class="view" data-view="laboratorio">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Produção</p>
+            <h2>Laboratório</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn" data-act="nova-os" type="button">Abrir OS</button>
+          </div>
+        </div>
+        <section class="panel">
+          <div class="twrap" id="osTableWrap"></div>
+          <div class="d-note"><b>Tela nova, motor antigo.</b> É a mecânica de tarefas com prazo do CRM da Meal Time aplicada à ordem de serviço. OS além da data prometida dispara aviso ao cliente antes de ele ligar reclamando.</div>
+        </section>
+      </section>
+
+      <section class="view" data-view="automacoes">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Réguas de contato</p>
+            <h2>Automações</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn" data-act="nova-regra" type="button">Nova regra</button>
+          </div>
+        </div>
+        <section class="panel">
+          <div id="regrasList"></div>
+          <div class="d-note"><b>Mesma engrenagem, outra escala.</b> Na Meal Time a régua é de dias, porque comida recompra rápido. Aqui vira 12, 18 e 24 meses conforme o tipo de lente. É configuração, não código novo.</div>
+        </section>
+      </section>
+
+      <section class="view" data-view="relatorios">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Indicadores</p>
+            <h2>Relatórios</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="csv-relatorio" type="button">Exportar Excel</button>
+          </div>
+        </div>
+        <div class="kpi-band" id="repKpis"></div>
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Base</p>
+              <h3 id="repBaseTitle"></h3>
+            </div>
+          </div>
+          <div id="repBars" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+          <div class="d-note"><b>Este gráfico é a venda.</b> Hoje a Bless não consegue desenhar esta barra, porque ninguém sabe quanto da base está com a janela vencida. É o primeiro relatório útil que o sistema entrega.</div>
+        </section>
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Qualidade de serviço</p>
+              <h3>Laboratório e pós-venda</h3>
+            </div>
+          </div>
+          <div id="repLab"></div>
+        </section>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- dialogs -->
+<dialog id="paletteDlg">
+  <div class="pal-input">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="palInput" type="text" placeholder="Buscar cliente, tarefa ou ação..." autocomplete="off">
+    <kbd style="font-family:var(--mono);font-size:.65rem;color:var(--muted-soft);">esc</kbd>
+  </div>
+  <div class="pal-results" id="palResults"></div>
+</dialog>
+
+<dialog id="clienteDlg">
+  <form method="dialog" id="clienteForm">
+    <div class="dlg-head"><h3 id="clienteDlgTitle">Novo cliente</h3><button class="dlg-close" type="button" data-close="clienteDlg" aria-label="Fechar">×</button></div>
+    <div class="dlg-body">
+      <div><label for="cfNome">Nome *</label><input id="cfNome" required></div>
+      <div class="two">
+        <div><label for="cfFone">WhatsApp *</label><input id="cfFone" required placeholder="(53) 9xxxx-xxxx"></div>
+        <div><label for="cfNasc">Nascimento</label><input id="cfNasc" type="date"></div>
+      </div>
+      <div class="two">
+        <div><label for="cfBairro">Bairro</label><input id="cfBairro"></div>
+        <div><label for="cfOrigem">Origem</label>
+          <select id="cfOrigem"><option>Indicação</option><option>Instagram</option><option>Google</option><option>Rua</option><option>Ótica Móvel</option></select>
+        </div>
+      </div>
+      <div class="two">
+        <div><label for="cfTipo">Tipo de lente</label>
+          <select id="cfTipo"><option>Multifocal</option><option>Monofocal</option><option>Ocupacional</option><option>Solar com grau</option></select>
+        </div>
+        <div><label for="cfMarca">Marca</label>
+          <select id="cfMarca"><option>Varilux</option><option>Zeiss</option><option>Hoya</option><option>Outras</option></select>
+        </div>
+      </div>
+      <div class="two">
+        <div><label for="cfAtend">Atendimento</label>
+          <select id="cfAtend"><option>Loja Centro</option><option>Ótica Móvel</option></select>
+        </div>
+        <div><label for="cfResp">Responsável</label>
+          <select id="cfResp"><option>Camila</option><option>Rafael</option><option>Juliana</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn-ghost" type="button" data-close="clienteDlg">Cancelar</button>
+      <button class="btn" type="submit" id="clienteDlgSave">Salvar cliente</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="tarefaDlg">
+  <form method="dialog" id="tarefaForm">
+    <div class="dlg-head"><h3>Nova tarefa</h3><button class="dlg-close" type="button" data-close="tarefaDlg" aria-label="Fechar">×</button></div>
+    <div class="dlg-body">
+      <div><label for="tfTitulo">Tarefa *</label><input id="tfTitulo" required placeholder="Ex.: Retomar orçamento"></div>
+      <div><label for="tfCliente">Cliente</label><select id="tfCliente"></select></div>
+      <div class="two">
+        <div><label for="tfData">Data</label><input id="tfData" type="date" value="2026-08-04"></div>
+        <div><label for="tfHora">Hora</label><input id="tfHora" type="time" value="09:00"></div>
+      </div>
+      <div class="two">
+        <div><label for="tfTipo">Tipo</label>
+          <select id="tfTipo"><option>Recompra</option><option>Orçamento</option><option>Pós-venda</option><option>Ordem de serviço</option><option>Visita</option><option>Relacionamento</option></select>
+        </div>
+        <div><label for="tfResp">Responsável</label>
+          <select id="tfResp"><option>Camila</option><option>Rafael</option><option>Juliana</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn-ghost" type="button" data-close="tarefaDlg">Cancelar</button>
+      <button class="btn" type="submit">Salvar tarefa</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="osDlg">
+  <form method="dialog" id="osForm">
+    <div class="dlg-head"><h3>Abrir ordem de serviço</h3><button class="dlg-close" type="button" data-close="osDlg" aria-label="Fechar">×</button></div>
+    <div class="dlg-body">
+      <div><label for="osCliente">Cliente *</label><select id="osCliente"></select></div>
+      <div><label for="osLente">Lente</label><input id="osLente" placeholder="Ex.: Varilux Comfort AR"></div>
+      <div class="two">
+        <div><label for="osLab">Laboratório</label>
+          <select id="osLab"><option>Essilor</option><option>Zeiss</option><option>Hoya</option><option>Local</option></select>
+        </div>
+        <div><label for="osProm">Prometida para</label><input id="osProm" type="date" value="2026-08-14"></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn-ghost" type="button" data-close="osDlg">Cancelar</button>
+      <button class="btn" type="submit">Abrir OS</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="regraDlg">
+  <form method="dialog" id="regraForm">
+    <div class="dlg-head"><h3>Nova regra de contato</h3><button class="dlg-close" type="button" data-close="regraDlg" aria-label="Fechar">×</button></div>
+    <div class="dlg-body">
+      <div><label for="rgQuando">Quando</label><input id="rgQuando" required placeholder="Ex.: 6 meses após a compra"></div>
+      <div><label for="rgAcao">Ação</label><input id="rgAcao" required placeholder="Ex.: Oferecer limpeza e ajuste gratuitos"></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn-ghost" type="button" data-close="regraDlg">Cancelar</button>
+      <button class="btn" type="submit">Salvar regra</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toasts" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ============ dados (amostra ficticia) ============ */
+var HOJE = "2026-08-04";
+
+var CLIENTES = [
+  { id:"c1",  nome:"Marlene Kruger",  bairro:"Centro",      origem:"Indicação",  fone:"53998142207", email:"marlene.kruger@gmail.com", nasc:"1962-06-14", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux Comfort",  tratamento:"AR + Transitions", armacao:"Acetato 54", receita:"2024-09-20", garantiaAte:"2025-10-02", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:["VIP"],
+    compras:[{data:"2019-03-18",produto:"Óculos completo",lente:"Monofocal AR",valor:1270,atend:"Camila"},{data:"2022-03-05",produto:"Óculos completo",lente:"Varilux Liberty",valor:1480,atend:"Rafael"},{data:"2024-10-02",produto:"Óculos completo",lente:"Varilux Comfort",valor:1640,atend:"Camila"}] },
+  { id:"c2",  nome:"Sirlei Marques",  bairro:"Areal",       origem:"Rua",        fone:"53990507741", email:"", nasc:"1958-02-09", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2023-08-15", garantiaAte:"2024-09-02", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:[],
+    compras:[{data:"2023-09-02",produto:"Óculos completo",lente:"Monofocal AR",valor:520,atend:"Rafael"}] },
+  { id:"c3",  nome:"Dilma Nunes",     bairro:"Laranjal",    origem:"Ótica Móvel",fone:"53984021173", email:"", nasc:"1949-11-02", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux XR",       tratamento:"AR + Blue",  armacao:"Acetato 53", receita:"2024-10-30", garantiaAte:"2025-11-08", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:["VIP","Não sai de casa"],
+    compras:[{data:"2022-05-14",produto:"Óculos completo",lente:"Varilux Liberty",valor:1690,atend:"Rafael"},{data:"2024-11-08",produto:"Óculos completo",lente:"Varilux XR",valor:2180,atend:"Rafael"}] },
+  { id:"c4",  nome:"Jocelí Ávila",    bairro:"Três Vendas", origem:"Instagram",  fone:"53991268890", email:"joceli.avila@hotmail.com", nasc:"1966-03-12", tipo:"Multifocal",     marca:"Zeiss",   lente:"Zeiss SmartLife",  tratamento:"AR + DuraVision", armacao:"Acetato 55", receita:"2025-03-01", garantiaAte:"2026-08-28", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:[],
+    compras:[{data:"2023-02-10",produto:"Óculos completo",lente:"Zeiss monofocal",valor:1520,atend:"Camila"},{data:"2025-03-20",produto:"Óculos completo",lente:"Zeiss SmartLife",valor:1890,atend:"Camila"}] },
+  { id:"c5",  nome:"Nelson Vieira",   bairro:"Centro",      origem:"Google",     fone:"53992714408", email:"nelson.vieira@gmail.com", nasc:"1971-07-30", tipo:"Ocupacional",    marca:"Zeiss",   lente:"Zeiss Officelens", tratamento:"AR + Blue",  armacao:"Metal 54", receita:"2025-01-28", garantiaAte:"2027-02-14", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:[],
+    compras:[{data:"2025-02-14",produto:"Óculos completo",lente:"Zeiss Officelens",valor:1450,atend:"Camila"}], orcamento:{valor:1890,desde:"2026-08-01",item:"Multifocal Zeiss"} },
+  { id:"c6",  nome:"Rogério Bastos",  bairro:"Fragata",     origem:"Indicação",  fone:"53997335512", email:"", nasc:"1980-05-21", tipo:"Ocupacional",    marca:"Hoya",    lente:"Hoya Sync III",    tratamento:"Antirreflexo", armacao:"Acetato 54", receita:"2026-07-10", garantiaAte:"2028-07-18", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:[],
+    compras:[{data:"2024-04-03",produto:"Óculos completo",lente:"Hoya monofocal",valor:980,atend:"Camila"},{data:"2026-07-18",produto:"Óculos completo",lente:"Hoya Sync III",valor:1120,atend:"Camila"}] },
+  { id:"c7",  nome:"Cláudia Peres",   bairro:"Centro",      origem:"Instagram",  fone:"53996883024", email:"clauperes@gmail.com", nasc:"1985-09-17", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux Comfort",  tratamento:"AR", armacao:"Acetato 52", receita:"2024-08-01", garantiaAte:"2028-05-29", segundoPar:true, atendimento:"Loja Centro", resp:"Camila",  tags:[],
+    compras:[{data:"2024-08-19",produto:"Óculos completo",lente:"Varilux Comfort",valor:1360,atend:"Camila"},{data:"2026-05-29",produto:"Solar com grau",lente:"Solar com grau",valor:980,atend:"Camila"}] },
+  { id:"c8",  nome:"Ivone Cardoso",   bairro:"Centro",      origem:"Indicação",  fone:"53991903345", email:"ivone.cardoso@gmail.com", nasc:"1957-08-04", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux Physio",   tratamento:"AR + Transitions", armacao:"Metal 53", receita:"2023-12-20", garantiaAte:"2025-01-15", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:["VIP"],
+    compras:[{data:"2024-01-15",produto:"Óculos completo",lente:"Varilux Physio",valor:1980,atend:"Camila"}], orcamento:{valor:2340,desde:"2026-07-30",item:"Varilux XR + Transitions"} },
+  { id:"c9",  nome:"Adilson Porto",   bairro:"Três Vendas", origem:"Rua",        fone:"53993458821", email:"", nasc:"1975-08-04", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux Comfort",  tratamento:"AR", armacao:"Acetato 56", receita:"2026-07-25", garantiaAte:"2028-08-01", segundoPar:false, atendimento:"Loja Centro", resp:"Rafael",  tags:[],
+    compras:[{data:"2024-02-11",produto:"Óculos completo",lente:"Varilux Liberty",valor:1450,atend:"Rafael"},{data:"2026-08-01",produto:"Óculos completo",lente:"Varilux Comfort",valor:1780,atend:"Rafael"}] },
+  { id:"c10", nome:"Neusa Fagundes",  bairro:"Porto",       origem:"Indicação",  fone:"53981224409", email:"", nasc:"1956-08-04", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"Antirreflexo", armacao:"Metal 51", receita:"2024-12-27", garantiaAte:"2026-01-10", segundoPar:false, atendimento:"Loja Centro", resp:"Juliana", tags:[],
+    compras:[{data:"2025-01-10",produto:"Óculos completo",lente:"Monofocal AR",valor:640,atend:"Juliana"}] },
+  { id:"c11", nome:"Paulo Régis",     bairro:"Fragata",     origem:"Google",     fone:"53998187702", email:"pauloregis90@gmail.com", nasc:"1990-04-25", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"AR + Blue", armacao:"Acetato 55", receita:"2024-05-30", garantiaAte:"2025-06-10", segundoPar:false, atendimento:"Loja Centro", resp:"Rafael",  tags:[],
+    compras:[{data:"2024-06-10",produto:"Óculos completo",lente:"Monofocal AR",valor:690,atend:"Rafael"}], orcamento:{valor:780,desde:"2026-08-02",item:"Monofocal Blue"} },
+  { id:"c12", nome:"Tereza Lima",     bairro:"Areal",       origem:"Ótica Móvel",fone:"53984552210", email:"", nasc:"1944-12-01", tipo:"Multifocal",     marca:"Hoya",    lente:"Hoya multifocal",  tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2024-09-05", garantiaAte:"2025-09-22", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:["Não sai de casa"],
+    compras:[{data:"2024-09-22",produto:"Óculos completo",lente:"Hoya multifocal",valor:1560,atend:"Rafael"}] },
+  { id:"c13", nome:"Marcos Antunes",  bairro:"Centro",      origem:"Instagram",  fone:"53999021180", email:"marcosantunes98@gmail.com", nasc:"1998-10-05", tipo:"Solar com grau", marca:"Outras",  lente:"Solar com grau",   tratamento:"Polarizado", armacao:"Acetato 55", receita:"2026-05-28", garantiaAte:"2028-06-12", segundoPar:true, atendimento:"Loja Centro", resp:"Juliana", tags:[],
+    compras:[{data:"2026-06-12",produto:"Solar com grau",lente:"Solar com grau",valor:720,atend:"Juliana"}] },
+  { id:"c14", nome:"Eloá Martins",    bairro:"Três Vendas", origem:"Instagram",  fone:"53996174452", email:"eloa.martins@gmail.com", nasc:"2001-02-27", tipo:"Monofocal",      marca:"Outras",  lente:"—",                tratamento:"—", armacao:"—", receita:"2026-08-01", garantiaAte:null, segundoPar:false, atendimento:"Loja Centro", resp:"Juliana", tags:[],
+    compras:[], orcamento:{valor:560,desde:"2026-08-03",item:"Monofocal AR"} }
+];
+
+var OS = [
+  { n:2418, cid:"c6",  lente:"Hoya Sync III",     lab:"Hoya",    aberta:"2026-07-22", prometida:"2026-08-01", entregue:null, obs:"Pronta no laboratório, entrega atrasada" },
+  { n:2427, cid:"c9",  lente:"Varilux Comfort",   lab:"Essilor", aberta:"2026-08-01", prometida:"2026-08-11", entregue:null, obs:"Aguardando armação do fornecedor" },
+  { n:2401, cid:"c13", lente:"Solar com grau",    lab:"Local",   aberta:"2026-06-12", prometida:"2026-06-24", entregue:"2026-06-22", obs:"" },
+  { n:2389, cid:"c7",  lente:"Solar com grau",    lab:"Essilor", aberta:"2026-05-29", prometida:"2026-06-08", entregue:"2026-06-06", obs:"" },
+  { n:1987, cid:"c1",  lente:"Varilux Comfort",   lab:"Essilor", aberta:"2024-10-02", prometida:"2024-10-12", entregue:"2024-10-12", obs:"" }
+];
+
+var TAREFAS = [
+  { id:"t1",  titulo:"Retomar orçamento de R$ 1.890", cid:"c5",  tipo:"Orçamento", data:"2026-08-04", hora:"09:00", resp:"Camila",  status:"aberta" },
+  { id:"t2",  titulo:"Avisar: garantia da Jocelí vence em 24 dias", cid:"c4", tipo:"Pós-venda", data:"2026-08-04", hora:"11:30", resp:"Camila", status:"aberta" },
+  { id:"t3",  titulo:"Avisar atraso da OS 2418", cid:"c6",  tipo:"Ordem de serviço", data:"2026-08-01", hora:"14:00", resp:"Rafael", status:"aberta" },
+  { id:"t4",  titulo:"Convite de revisão de grau", cid:"c1",  tipo:"Recompra", data:"2026-08-04", hora:"16:00", resp:"Camila", status:"aberta" },
+  { id:"t5",  titulo:"Parabéns aos 3 aniversariantes de hoje", cid:null, tipo:"Relacionamento", data:"2026-08-04", hora:"10:00", resp:"Camila", status:"aberta" },
+  { id:"t6",  titulo:"Visita Ótica Móvel: Dilma Nunes", cid:"c3",  tipo:"Visita", data:"2026-08-05", hora:"09:00", resp:"Rafael", status:"aberta" },
+  { id:"t7",  titulo:"Visita Ótica Móvel: Residencial Recanto (6 clientes)", cid:null, tipo:"Visita", data:"2026-08-05", hora:"10:30", resp:"Rafael", status:"aberta" },
+  { id:"t8",  titulo:"Visita Ótica Móvel: Sirlei Marques", cid:"c2",  tipo:"Visita", data:"2026-08-05", hora:"14:00", resp:"Rafael", status:"aberta" },
+  { id:"t9",  titulo:"Entrega da OS 2418 na rota", cid:"c6",  tipo:"Visita", data:"2026-08-05", hora:"15:30", resp:"Rafael", status:"aberta" },
+  { id:"t10", titulo:"Retomar orçamento de R$ 2.340", cid:"c8",  tipo:"Orçamento", data:"2026-07-30", hora:"15:00", resp:"Camila", status:"aberta" },
+  { id:"t11", titulo:"Retomar orçamento de R$ 780", cid:"c11", tipo:"Orçamento", data:"2026-08-06", hora:"10:00", resp:"Rafael", status:"aguardando" },
+  { id:"t12", titulo:"Conferir adaptação do solar", cid:"c13", tipo:"Pós-venda", data:"2026-06-29", hora:"10:00", resp:"Juliana", status:"concluida", resultado:"Sem queixas, adaptou bem" },
+  { id:"t13", titulo:"Primeira retomada: orçamento da Eloá", cid:"c14", tipo:"Orçamento", data:"2026-08-07", hora:"09:30", resp:"Juliana", status:"aberta" }
+];
+
+var REGRAS = [
+  { id:"r1", quando:"7 dias após a entrega",   acao:"Conferência de adaptação da multifocal", ativa:true },
+  { id:"r2", quando:"48h após o orçamento",    acao:"Retomada de orçamento não fechado", ativa:true },
+  { id:"r3", quando:"na data prometida",       acao:"Aviso de atraso da ordem de serviço", ativa:true },
+  { id:"r4", quando:"12 meses",                acao:"Convite para revisão de grau anual", ativa:true },
+  { id:"r5", quando:"18 meses",                acao:"Janela de troca: multifocal e ocupacional", ativa:true },
+  { id:"r6", quando:"24 meses",                acao:"Janela de troca: monofocal e solar", ativa:true },
+  { id:"r7", quando:"30 dias antes",           acao:"Aviso de garantia prestes a vencer", ativa:true },
+  { id:"r8", quando:"sazonal (verão)",         acao:"Solar com grau para quem não tem segundo par", ativa:false }
+];
+
+/* ============ utilitarios ============ */
+function $(s, el) { return (el || document).querySelector(s); }
+function $$(s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); }
+var NF = new Intl.NumberFormat("pt-BR");
+function brl(v) { return "R$ " + NF.format(Math.round(v)); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+function dtBR(iso) { if (!iso) return "—"; var p = iso.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; }
+function mesAno(iso) { var p = iso.split("-"); return p[1] + "/" + p[0]; }
+function dias(a, b) { return Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 86400000); }
+function meses(a, b) {
+  var pa = a.split("-").map(Number), pb = b.split("-").map(Number);
+  var m = (pb[0] - pa[0]) * 12 + (pb[1] - pa[1]);
+  if (pb[2] < pa[2]) m--;
+  return m;
+}
+function fmtFone(f) { return "(" + f.slice(0,2) + ") " + f.slice(2,7) + "-" + f.slice(7); }
+function iniciais(nome) { var p = nome.trim().split(/\s+/); return (p[0][0] + (p[1] ? p[1][0] : "")).toUpperCase(); }
+
+/* enriquecimento calculado */
+function info(c) {
+  var e = {};
+  e.ultCompra = c.compras.length ? c.compras[c.compras.length - 1].data : null;
+  e.ultValor = c.compras.length ? c.compras[c.compras.length - 1].valor : 0;
+  e.ltv = c.compras.reduce(function (s, p) { return s + p.valor; }, 0);
+  e.ticket = c.compras.length ? Math.round(e.ltv / c.compras.length) : 0;
+  e.limite = (c.tipo === "Monofocal" || c.tipo === "Solar com grau") ? 24 : 18;
+  if (!e.ultCompra) {
+    e.janela = { k: "sem", label: "Sem compra", cls: "" , over: -99 };
+  } else {
+    e.mUlt = meses(e.ultCompra, HOJE);
+    var over = e.mUlt - e.limite;
+    if (over >= 0) e.janela = { k: "vencida", label: "Vencida há " + (over || 1) + "m", cls: "is-danger", over: over || 1 };
+    else if (e.mUlt >= e.limite - 6) e.janela = { k: "janela", label: "Na janela · " + (-over) + "m", cls: "is-warn", over: over };
+    else e.janela = { k: "emdia", label: "Em dia", cls: "is-ok", over: over };
+  }
+  if (!c.garantiaAte) e.gar = { label: "—", k: "none" };
+  else {
+    var d = dias(HOJE, c.garantiaAte);
+    if (d < 0) e.gar = { label: "Expirada", k: "venc" };
+    else if (d <= 30) e.gar = { label: "Vence em " + d + "d", k: "avencer" };
+    else e.gar = { label: "Até " + mesAno(c.garantiaAte), k: "ok" };
+  }
+  e.aniv = c.nasc && c.nasc.slice(5) === HOJE.slice(5);
+  e.idade = c.nasc ? Math.floor(dias(c.nasc, HOJE) / 365.25) : null;
+  e.orcDias = c.orcamento ? dias(c.orcamento.desde, HOJE) : null;
+  return e;
+}
+function cli(id) { for (var i = 0; i < CLIENTES.length; i++) if (CLIENTES[i].id === id) return CLIENTES[i]; return null; }
+function nomeDe(id) { var c = cli(id); return c ? c.nome : "—"; }
+
+function osStatus(o) {
+  if (o.entregue) {
+    var atr = dias(o.prometida, o.entregue);
+    return atr > 0 ? { label: "Entregue com " + atr + "d de atraso", cls: "is-warn" } : { label: "Entregue no prazo", cls: "is-ok" };
+  }
+  var d = dias(o.prometida, HOJE);
+  if (d > 0) return { label: d + "d de atraso", cls: "is-danger" };
+  if (o.obs && o.obs.indexOf("Aguardando") === 0) return { label: "Aguardando armação", cls: "is-warn" };
+  return { label: "No prazo · vence " + dtBR(o.prometida), cls: "is-ok" };
+}
+function taskLate(t) { return t.status !== "concluida" && t.data < HOJE; }
+
+/* ============ estado ============ */
+var state = {
+  view: "resumo", fichaId: "c1", tab: "overview", diff: false,
+  taskTab: "hoje", taskDia: null, cal: { y: 2026, m: 7 },
+  msgIdx: 0,
+  cli: { situ: "all", tipos: [], marca: "all", tMin: "", tMax: "", mMin: "", mMax: "", ord: "urgencia", busca: "", store: "all", page: 1, sel: {} }
+};
+var seq = 100;
+
+/* ============ toasts ============ */
+function toast(msg, tipo) {
+  var el = document.createElement("div");
+  el.className = "toast " + (tipo || "ok");
+  el.textContent = msg;
+  $("#toasts").appendChild(el);
+  setTimeout(function () { el.remove(); }, 3600);
+}
+
+/* ============ navegacao ============ */
+var VIEWS = [
+  { k: "resumo",      titulo: "Resumo",          icon: '<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>' },
+  { k: "tarefas",     titulo: "Tarefas",         icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>' },
+  { k: "clientes",    titulo: "Clientes",        icon: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>' },
+  { k: "ficha",       titulo: "Ficha do cliente",icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>' },
+  { k: "movel",       titulo: "Ótica Móvel",     icon: '<path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>' },
+  { k: "laboratorio", titulo: "Laboratório",     icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>' },
+  { k: "automacoes",  titulo: "Automações",      icon: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>' },
+  { k: "relatorios",  titulo: "Relatórios",      icon: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>' }
+];
+
+function badgeCounts() {
+  var tHoje = TAREFAS.filter(function (t) { return t.status === "aberta" && (t.data === HOJE || taskLate(t)); }).length;
+  var visitas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; }).length;
+  var osAtr = OS.filter(function (o) { return !o.entregue && dias(o.prometida, HOJE) > 0; }).length;
+  return { tarefas: tHoje, movel: visitas, laboratorio: osAtr };
+}
+
+function renderNav() {
+  var b = badgeCounts();
+  $("#mainNav").innerHTML = VIEWS.map(function (v) {
+    var badge = "";
+    if (v.k === "tarefas" && b.tarefas) badge = '<span class="nav-count">' + b.tarefas + "</span>";
+    if (v.k === "movel" && b.movel) badge = '<span class="nav-count is-brandish">' + b.movel + "</span>";
+    if (v.k === "laboratorio" && b.laboratorio) badge = '<span class="nav-count">' + b.laboratorio + "</span>";
+    return '<button class="nav-link' + (state.view === v.k ? " is-active" : "") + '" data-go="' + v.k + '" type="button">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + v.icon + "</svg>" + v.titulo + badge + "</button>";
+  }).join("");
+}
+
+function go(view) {
+  state.view = view;
+  $$(".view").forEach(function (v) { v.classList.toggle("is-active", v.dataset.view === view); });
+  var meta = VIEWS.filter(function (v) { return v.k === view; })[0];
+  $("#appbarTitle").textContent = meta ? meta.titulo : "";
+  renderNav();
+  renderView(view);
+  window.scrollTo({ top: 0 });
+}
+
+function renderView(view) {
+  if (view === "resumo") renderResumo();
+  else if (view === "tarefas") renderTarefas();
+  else if (view === "clientes") renderClientes();
+  else if (view === "ficha") renderFicha();
+  else if (view === "movel") renderMovel();
+  else if (view === "laboratorio") renderLab();
+  else if (view === "automacoes") renderRegras();
+  else if (view === "relatorios") renderRelatorios();
+}
+/* ============ resumo ============ */
+function spark(vals) {
+  var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), range = max - min || 1;
+  var pts = vals.map(function (v, i) {
+    return (i * (100 / (vals.length - 1))).toFixed(1) + "," + (24 - ((v - min) / range) * 20 + 1).toFixed(1);
+  }).join(" ");
+  return '<svg viewBox="0 0 100 26" aria-hidden="true"><polyline points="' + pts + '"/></svg>';
+}
+
+function calcResumo() {
+  var r = { vencidos: [], janela: [], emdia: [], sem: [], aniv: [], orc: [], garVenc: [], gar30: [], semPar: [], multiSemSolar: [] };
+  CLIENTES.forEach(function (c) {
+    var e = info(c);
+    c._e = e;
+    if (e.janela.k === "vencida") r.vencidos.push(c);
+    else if (e.janela.k === "janela") r.janela.push(c);
+    else if (e.janela.k === "emdia") r.emdia.push(c);
+    else r.sem.push(c);
+    if (e.aniv) r.aniv.push(c);
+    if (c.orcamento) r.orc.push(c);
+    if (e.gar.k === "venc") r.garVenc.push(c);
+    if (e.gar.k === "avencer") r.gar30.push(c);
+    if (c.compras.length && !c.segundoPar) r.semPar.push(c);
+    if (c.tipo === "Multifocal" && !c.segundoPar && c.compras.length) r.multiSemSolar.push(c);
+  });
+  r.vencidos.sort(function (a, b) { return b._e.janela.over - a._e.janela.over; });
+  r.parado = r.vencidos.reduce(function (s, c) { return s + c._e.ultValor; }, 0);
+  r.osAbertas = OS.filter(function (o) { return !o.entregue; });
+  r.osAtrasadas = r.osAbertas.filter(function (o) { return dias(o.prometida, HOJE) > 0; });
+  r.orc48 = r.orc.filter(function (c) { return c._e.orcDias >= 2; });
+  return r;
+}
+
+function renderResumo() {
+  var r = calcResumo();
+  var b = badgeCounts();
+
+  $("#noticeStrip").innerHTML =
+    (r.osAtrasadas.length ? '<button class="notice crit" data-go="laboratorio" type="button">' + r.osAtrasadas.length + " OS atrasada" + (r.osAtrasadas.length > 1 ? "s" : "") + " no laboratório</button>" : "") +
+    (r.orc48.length ? '<button class="notice warn" data-act="filtro-rapido" data-f="orc" type="button">' + r.orc48.length + " orçamentos sem retorno há 48h+</button>" : "") +
+    (r.aniv.length ? '<button class="notice info" data-act="filtro-rapido" data-f="aniv" type="button">' + r.aniv.length + " aniversariantes hoje</button>" : "");
+
+  $("#quickRow").innerHTML =
+    '<button class="quick-card" data-act="novo-cliente" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><strong>Novo cliente</strong><small>Cadastrar e abrir a primeira venda</small></button>' +
+    '<button class="quick-card" data-act="nova-tarefa" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><strong>Nova tarefa</strong><small>Follow-up, retorno ou pós-venda</small></button>' +
+    '<button class="quick-card" data-act="nova-os" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><strong>Abrir ordem de serviço</strong><small>Enviar ao laboratório e acompanhar prazo</small></button>';
+
+  var compradores = CLIENTES.filter(function (c) { return c.compras.length; });
+  var recompra = compradores.filter(function (c) { return c.compras.length >= 2; });
+  var txRec = Math.round(recompra.length / compradores.length * 100);
+  var tickets = [];
+  CLIENTES.forEach(function (c) { c.compras.forEach(function (p) { tickets.push(p.valor); }); });
+  var tMedio = Math.round(tickets.reduce(function (s, v) { return s + v; }, 0) / tickets.length);
+
+  $("#kpiBand").innerHTML =
+    '<div class="kpi-tile"><span class="k-label">Taxa de recompra da base</span><span class="k-val">' + txRec + '%</span>' + spark([28, 30, 29, 33, 38, 42, 46]) + '<span class="k-delta up">▲ subindo desde a implantação</span></div>' +
+    '<div class="kpi-tile"><span class="k-label">Base com janela vencida</span><span class="k-val">' + r.vencidos.length + '</span>' + spark([9, 9, 8, 8, 7, 7, 6]) + '<span class="k-delta down">' + brl(r.parado) + " parados</span></div>" +
+    '<div class="kpi-tile"><span class="k-label">Orçamentos em aberto</span><span class="k-val">' + r.orc.length + '</span>' + spark([2, 3, 5, 4, 6, 5, 4]) + '<span class="k-delta flat">' + r.orc48.length + " sem retorno há 48h+</span></div>" +
+    '<div class="kpi-tile"><span class="k-label">Ticket médio</span><span class="k-val">' + brl(tMedio) + "</span>" + spark([980, 1050, 1100, 1190, 1240, 1310, 1350]) + '<span class="k-delta up">▲ multifocal puxando</span></div>';
+
+  $("#focusStrip").innerHTML =
+    '<div style="flex:1;min-width:14rem;"><strong>Foco de hoje: ' + r.vencidos.length + " clientes com janela de troca vencida</strong>" +
+    "<p>Pelo ticket da última compra de cada um, são " + brl(r.parado) + " que já deveriam ter voltado.</p></div>" +
+    '<button class="btn" data-act="filtro-rapido" data-f="vencidos" type="button">Abrir lista priorizada</button>';
+
+  function linhas(arr, fmt) { return arr.slice(0, 3).map(fmt).join(""); }
+  function lc(c, extra) { return '<button class="s-line" data-ficha="' + c.id + '" type="button">' + esc(c.nome) + (extra ? " · " + extra : "") + "</button>"; }
+  var ic = function (path) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + path + "</svg>"; };
+
+  $("#summaryGrid").innerHTML =
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>') + 'Janela de troca</h4><span class="chip is-danger">' + r.vencidos.length + ' vencidos</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="janela" type="button">Na janela <strong>' + r.janela.length + '</strong></button><button class="s-mini" data-act="filtro-rapido" data-f="vencidos" type="button">Vencidos <strong>' + r.vencidos.length + "</strong></button></div>" +
+    '<div class="s-list">' + linhas(r.vencidos, function (c) { return lc(c, c._e.janela.label.toLowerCase()); }) + "</div>" +
+    '<div class="s-foot">Recompra</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>') + 'Orçamentos</h4><span class="chip is-warn">' + r.orc.length + ' abertos</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="orc" type="button">Sem retorno 48h <strong>' + r.orc48.length + "</strong></button></div>" +
+    '<div class="s-list">' + linhas(r.orc, function (c) { return lc(c, brl(c.orcamento.valor) + " há " + c._e.orcDias + "d"); }) + "</div>" +
+    '<div class="s-foot">Conversão</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>') + 'Laboratório</h4><span class="chip ' + (r.osAtrasadas.length ? "is-danger" : "is-ok") + '">' + (r.osAtrasadas.length ? r.osAtrasadas.length + " atrasada" : "em dia") + '</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-go="laboratorio" type="button">Em aberto <strong>' + r.osAbertas.length + "</strong></button></div>" +
+    '<div class="s-list">' + r.osAbertas.slice(0, 3).map(function (o) { var s = osStatus(o); return '<button class="s-line" data-go="laboratorio" type="button">OS ' + o.n + " · " + esc(nomeDe(o.cid)) + " · " + s.label.toLowerCase() + "</button>"; }).join("") + "</div>" +
+    '<div class="s-foot">Produção</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>') + 'Garantia</h4><span class="chip is-warn">' + r.gar30.length + ' vencendo</span></div>' +
+    '<div class="s-badges"><span class="s-mini">Expiradas <strong>' + r.garVenc.length + "</strong></span></div>" +
+    '<div class="s-list">' + linhas(r.gar30.concat(r.garVenc), function (c) { return lc(c, c._e.gar.label.toLowerCase()); }) + "</div>" +
+    '<div class="s-foot">Pós-venda</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="3"/><path d="M3 12c2.5-5 6-7 9-7s6.5 2 9 7c-2.5 5-6 7-9 7s-6.5-2-9-7z"/>') + 'Segundo par</h4><span class="chip is-info">oportunidade</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="sempar" type="button">Só um par <strong>' + r.semPar.length + '</strong></button><span class="s-mini">Multifocal sem solar <strong>' + r.multiSemSolar.length + "</strong></span></div>" +
+    '<div class="s-list">' + linhas(r.multiSemSolar, function (c) { return lc(c, "ticket " + brl(c._e.ticket)); }) + "</div>" +
+    '<div class="s-foot">Anexação</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M10 17h4V5H2v12h3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/>') + 'Ótica Móvel</h4><span class="chip is-brand">' + b.movel + ' visitas</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="movel" type="button">Clientes Móvel <strong>' + CLIENTES.filter(function (c) { return c.atendimento === "Ótica Móvel"; }).length + "</strong></button></div>" +
+    '<div class="s-list">' + TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; }).slice(0, 3).map(function (t) { return '<button class="s-line" data-go="movel" type="button">' + dtBR(t.data).slice(0, 5) + " " + t.hora + " · " + esc(t.titulo.replace("Visita Ótica Móvel: ", "")) + "</button>"; }).join("") + "</div>" +
+    '<div class="s-foot">Atendimento externo</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M12 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 22v-2a7 7 0 0 1 14 0v2"/>') + 'Aniversariantes</h4><span class="chip is-ok">' + r.aniv.length + ' hoje</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-act="zap-aniv" type="button">Enviar parabéns aos ' + r.aniv.length + "</button></div>" +
+    '<div class="s-list">' + linhas(r.aniv, function (c) { return lc(c, c._e.idade + " anos"); }) + "</div>" +
+    '<div class="s-foot">Relacionamento</div></article>' +
+
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M20 6 9 17l-5-5"/>') + 'Tarefas</h4><span class="chip ' + (TAREFAS.some(taskLate) ? "is-danger" : "is-ok") + '">' + TAREFAS.filter(taskLate).length + ' atrasadas</span></div>' +
+    '<div class="s-list">' +
+      '<button class="s-line" data-act="task-tab" data-t="atrasadas" type="button">Atrasadas: ' + TAREFAS.filter(taskLate).length + "</button>" +
+      '<button class="s-line" data-act="task-tab" data-t="hoje" type="button">Hoje: ' + TAREFAS.filter(function (t) { return t.status === "aberta" && t.data === HOJE; }).length + "</button>" +
+      '<button class="s-line" data-act="task-tab" data-t="abertas" type="button">Em aberto: ' + TAREFAS.filter(function (t) { return t.status !== "concluida"; }).length + "</button>" +
+    "</div>" +
+    '<div class="s-foot">Agenda</div></article>';
+
+  /* desempenho por atendente, calculado das vendas de 2026 */
+  var porAtend = {};
+  CLIENTES.forEach(function (c) {
+    c.compras.forEach(function (p) {
+      if (p.data.slice(0, 4) !== "2026") return;
+      porAtend[p.atend] = porAtend[p.atend] || { vendas: 0, fat: 0 };
+      porAtend[p.atend].vendas++; porAtend[p.atend].fat += p.valor;
+    });
+  });
+  var linhasV = Object.keys(porAtend).sort(function (a, b) { return porAtend[b].fat - porAtend[a].fat; }).map(function (nome) {
+    var v = porAtend[nome];
+    var concl = TAREFAS.filter(function (t) { return t.resp === nome && t.status === "concluida"; }).length;
+    return "<tr><td style='display:flex;align-items:center;gap:.55rem;'><span class='avatar'>" + iniciais(nome) + "</span> " + nome + "</td>" +
+      "<td class='num td-r'>" + v.vendas + "</td><td class='num td-r'>" + brl(v.fat) + "</td><td class='num td-r'>" + brl(v.fat / v.vendas) + "</td><td class='num td-r'>" + concl + "</td></tr>";
+  }).join("");
+  $("#vendorWrap").innerHTML = '<table class="tbl"><thead><tr><th>Atendente</th><th class="td-r">Vendas</th><th class="td-r">Faturamento</th><th class="td-r">Ticket</th><th class="td-r">Tarefas concluídas</th></tr></thead><tbody>' + linhasV + "</tbody></table>";
+}
+/* ============ tarefas ============ */
+var TASK_TABS = [
+  { k: "hoje", label: "Hoje" }, { k: "atrasadas", label: "Atrasadas" }, { k: "abertas", label: "Abertas" },
+  { k: "aguardando", label: "Aguardando" }, { k: "concluidas", label: "Concluídas" }, { k: "todas", label: "Todas" }
+];
+function taskFiltradas() {
+  var arr = TAREFAS.slice();
+  if (state.taskDia) arr = arr.filter(function (t) { return t.data === state.taskDia; });
+  else if (state.taskTab === "hoje") arr = arr.filter(function (t) { return t.status === "aberta" && (t.data === HOJE || taskLate(t)); });
+  else if (state.taskTab === "atrasadas") arr = arr.filter(taskLate);
+  else if (state.taskTab === "abertas") arr = arr.filter(function (t) { return t.status !== "concluida"; });
+  else if (state.taskTab === "aguardando") arr = arr.filter(function (t) { return t.status === "aguardando"; });
+  else if (state.taskTab === "concluidas") arr = arr.filter(function (t) { return t.status === "concluida"; });
+  arr.sort(function (a, b) { return (a.data + a.hora) < (b.data + b.hora) ? -1 : 1; });
+  return arr;
+}
+function renderTarefas() {
+  $("#taskTabs").innerHTML = TASK_TABS.map(function (t) {
+    return '<button class="fchip' + (state.taskTab === t.k && !state.taskDia ? " is-active" : "") + '" data-act="task-tab" data-t="' + t.k + '" type="button">' + t.label + "</button>";
+  }).join("") + (state.taskDia ? '<span class="chip is-brand">Dia ' + dtBR(state.taskDia) + ' <button class="link-btn" data-act="task-dia-limpa" type="button" style="color:inherit">×</button></span>' : "");
+
+  var arr = taskFiltradas();
+  var rows = arr.map(function (t) {
+    var late = taskLate(t);
+    var st = t.status === "concluida" ? '<span class="chip is-ok">Concluída</span>'
+      : t.status === "aguardando" ? '<span class="chip">Aguardando</span>'
+      : late ? '<span class="chip is-danger">Atrasada</span>'
+      : t.data === HOJE ? '<span class="chip is-warn">Hoje</span>' : '<span class="chip">Agendada</span>';
+    return "<tr class='" + (t.status === "concluida" ? "task-done" : "") + "'>" +
+      '<td><button class="tcheck' + (t.status === "concluida" ? " done" : "") + '" data-act="task-toggle" data-id="' + t.id + '" type="button" aria-label="Concluir tarefa"></button></td>' +
+      '<td class="num">' + dtBR(t.data).slice(0, 5) + " " + t.hora + "</td>" +
+      '<td><span class="t-title">' + esc(t.titulo) + "</span>" + (t.resultado ? '<div class="t-sub">' + esc(t.resultado) + "</div>" : "") + "</td>" +
+      "<td>" + (t.cid ? '<button class="link-btn" data-ficha="' + t.cid + '" type="button">' + esc(nomeDe(t.cid)) + "</button>" : "—") + "</td>" +
+      "<td>" + st + "</td><td>" + esc(t.tipo) + "</td><td>" + esc(t.resp) + "</td></tr>";
+  }).join("");
+  $("#taskTableWrap").innerHTML = '<table class="tbl"><thead><tr><th></th><th>Data</th><th>Tarefa</th><th>Cliente</th><th>Situação</th><th>Tipo</th><th>Resp.</th></tr></thead><tbody>' +
+    (rows || '<tr><td colspan="7" class="muted" style="padding:1rem;">Nenhuma tarefa neste recorte.</td></tr>') + "</tbody></table>";
+  renderCal();
+}
+var MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+function renderCal() {
+  var y = state.cal.y, m = state.cal.m;
+  $("#calLabel").textContent = MESES_PT[m] + " " + y;
+  var first = new Date(y, m, 1).getDay();
+  var nDias = new Date(y, m + 1, 0).getDate();
+  var porDia = {};
+  TAREFAS.forEach(function (t) {
+    var p = t.data.split("-");
+    if (Number(p[0]) === y && Number(p[1]) === m + 1 && t.status !== "concluida") {
+      var d = Number(p[2]);
+      porDia[d] = porDia[d] || { late: false };
+      if (taskLate(t)) porDia[d].late = true;
+    }
+  });
+  var html = ["dom","seg","ter","qua","qui","sex","sáb"].map(function (d) { return '<div class="cal-dow">' + d + "</div>"; }).join("");
+  for (var i = 0; i < first; i++) html += '<div class="cal-day is-out"></div>';
+  for (var d = 1; d <= nDias; d++) {
+    var iso = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    var cls = (iso === HOJE ? " is-today" : "") + (iso === state.taskDia ? " is-sel" : "");
+    var dot = porDia[d] ? '<span class="cal-dot' + (porDia[d].late ? " crit" : "") + '"></span>' : "";
+    html += '<button class="cal-day' + cls + '" data-act="cal-dia" data-d="' + iso + '" type="button">' + d + dot + "</button>";
+  }
+  $("#calGrid").innerHTML = html;
+}
+
+/* ============ clientes ============ */
+var SITUS = [
+  { k: "all", label: "Todos" }, { k: "vencidos", label: "Vencidos" }, { k: "janela", label: "Na janela" },
+  { k: "emdia", label: "Em dia" }, { k: "semcompra", label: "Sem compra" }, { k: "aniv", label: "🎂 Aniversariantes hoje" },
+  { k: "garvenc", label: "Garantia expirada" }, { k: "orc", label: "Orçamento aberto" },
+  { k: "sempar", label: "Sem segundo par" }, { k: "movel", label: "🚐 Ótica Móvel" }
+];
+var TIPOS = ["Multifocal", "Monofocal", "Ocupacional", "Solar com grau"];
+
+function cliFiltrados() {
+  var f = state.cli;
+  var arr = CLIENTES.map(function (c) { c._e = info(c); return c; });
+  if (f.store !== "all") arr = arr.filter(function (c) { return c.atendimento === f.store; });
+  if (f.situ === "vencidos") arr = arr.filter(function (c) { return c._e.janela.k === "vencida"; });
+  else if (f.situ === "janela") arr = arr.filter(function (c) { return c._e.janela.k === "janela"; });
+  else if (f.situ === "emdia") arr = arr.filter(function (c) { return c._e.janela.k === "emdia"; });
+  else if (f.situ === "semcompra") arr = arr.filter(function (c) { return !c.compras.length; });
+  else if (f.situ === "aniv") arr = arr.filter(function (c) { return c._e.aniv; });
+  else if (f.situ === "garvenc") arr = arr.filter(function (c) { return c._e.gar.k === "venc"; });
+  else if (f.situ === "orc") arr = arr.filter(function (c) { return !!c.orcamento; });
+  else if (f.situ === "sempar") arr = arr.filter(function (c) { return c.compras.length && !c.segundoPar; });
+  else if (f.situ === "movel") arr = arr.filter(function (c) { return c.atendimento === "Ótica Móvel"; });
+  if (f.tipos.length) arr = arr.filter(function (c) { return f.tipos.indexOf(c.tipo) > -1; });
+  if (f.marca !== "all") arr = arr.filter(function (c) { return c.marca === f.marca; });
+  if (f.tMin !== "") arr = arr.filter(function (c) { return c._e.ultValor >= Number(f.tMin); });
+  if (f.tMax !== "") arr = arr.filter(function (c) { return c._e.ultValor <= Number(f.tMax); });
+  if (f.mMin !== "") arr = arr.filter(function (c) { return c._e.ultCompra && c._e.mUlt >= Number(f.mMin); });
+  if (f.mMax !== "") arr = arr.filter(function (c) { return c._e.ultCompra && c._e.mUlt <= Number(f.mMax); });
+  if (f.busca) {
+    var q = f.busca.toLowerCase();
+    arr = arr.filter(function (c) { return c.nome.toLowerCase().indexOf(q) > -1 || c.fone.indexOf(q.replace(/\D/g, "") || "␀") > -1 || c.bairro.toLowerCase().indexOf(q) > -1; });
+  }
+  var ord = f.ord;
+  arr.sort(function (a, b) {
+    if (ord === "urgencia") return b._e.janela.over - a._e.janela.over;
+    if (ord === "ult") return (b._e.ultCompra || "") < (a._e.ultCompra || "") ? -1 : 1;
+    if (ord === "ticket") return b._e.ultValor - a._e.ultValor;
+    if (ord === "ltv") return b._e.ltv - a._e.ltv;
+    return a.nome.localeCompare(b.nome, "pt-BR");
+  });
+  return arr;
+}
+function filtrosAtivos() {
+  var f = state.cli, n = 0;
+  if (f.situ !== "all") n++;
+  n += f.tipos.length;
+  if (f.marca !== "all") n++;
+  if (f.tMin !== "" || f.tMax !== "") n++;
+  if (f.mMin !== "" || f.mMax !== "") n++;
+  return n;
+}
+var PAGE = 6;
+function renderClientes() {
+  var f = state.cli;
+  $("#storeChips").innerHTML = [["all","Todos"],["Loja Centro","Loja Centro"],["Ótica Móvel","Ótica Móvel"]].map(function (s) {
+    return '<button class="fchip' + (f.store === s[0] ? " is-active" : "") + '" data-act="store" data-s="' + s[0] + '" type="button">' + s[1] + "</button>";
+  }).join("");
+  var r = calcResumo();
+  $("#situChips").innerHTML = SITUS.map(function (s) {
+    var badge = s.k === "vencidos" ? '<span class="lc">' + r.vencidos.length + "</span>" : s.k === "orc" ? '<span class="lc">' + r.orc.length + "</span>" : "";
+    return '<button class="fchip' + (f.situ === s.k ? " is-active" : "") + '" data-act="situ" data-s="' + s.k + '" type="button">' + s.label + badge + "</button>";
+  }).join("");
+  $("#tipoChips").innerHTML = TIPOS.map(function (t) {
+    return '<button class="fchip' + (f.tipos.indexOf(t) > -1 ? " is-active" : "") + '" data-act="tipo" data-s="' + esc(t) + '" type="button">' + t + "</button>";
+  }).join("");
+
+  var n = filtrosAtivos();
+  var fc = $("#fcount");
+  fc.hidden = n === 0; fc.textContent = n;
+
+  var arr = cliFiltrados();
+  $("#cliCount").textContent = arr.length + " de " + CLIENTES.length;
+  var totalPag = Math.max(1, Math.ceil(arr.length / PAGE));
+  if (f.page > totalPag) f.page = totalPag;
+  var pag = arr.slice((f.page - 1) * PAGE, f.page * PAGE);
+
+  var rows = pag.map(function (c) {
+    var e = c._e;
+    var sel = f.sel[c.id] ? " checked" : "";
+    return "<tr>" +
+      '<td><input type="checkbox" data-act="sel" data-id="' + c.id + '"' + sel + ' aria-label="Selecionar ' + esc(c.nome) + '"></td>' +
+      '<td><button class="link-btn cel-nome" data-ficha="' + c.id + '" type="button">' + esc(c.nome) + '</button><div class="cel-sub">' + esc(c.bairro) + (c.atendimento === "Ótica Móvel" ? " · 🚐" : "") + "</div></td>" +
+      '<td class="num">' + fmtFone(c.fone) + "</td>" +
+      "<td>" + esc(c.lente) + '<div class="cel-sub">' + esc(c.tipo) + "</div></td>" +
+      '<td class="num">' + dtBR(e.ultCompra) + "</td>" +
+      '<td><span class="chip ' + e.janela.cls + '">' + e.janela.label + "</span></td>" +
+      '<td class="cel-sub">' + e.gar.label + "</td>" +
+      '<td class="num td-r">' + (e.ultValor ? brl(e.ultValor) : "—") + "</td>" +
+      '<td class="cel-sub">' + esc(c.resp) + "</td>" +
+      '<td><button class="link-btn" data-zap="' + c.id + '" type="button">WhatsApp</button></td></tr>';
+  }).join("");
+  $("#cliTableWrap").innerHTML = '<table class="tbl" style="min-width:56rem"><thead><tr>' +
+    "<th></th><th>Nome</th><th>Contato</th><th>Lente</th>" +
+    '<th><button class="th-sort" data-act="ord" data-s="ult" type="button">Últ. compra ' + (f.ord === "ult" ? "↓" : "↕") + "</button></th>" +
+    '<th><button class="th-sort" data-act="ord" data-s="urgencia" type="button">Janela ' + (f.ord === "urgencia" ? "↓" : "↕") + "</button></th>" +
+    "<th>Garantia</th>" +
+    '<th class="td-r"><button class="th-sort" data-act="ord" data-s="ticket" type="button">Ticket ' + (f.ord === "ticket" ? "↓" : "↕") + "</button></th>" +
+    "<th>Resp.</th><th>Ação</th></tr></thead><tbody>" +
+    (rows || '<tr><td colspan="10" class="muted" style="padding:1rem;">Nenhum cliente neste recorte. Limpe os filtros.</td></tr>') + "</tbody></table>";
+
+  var pagBtns = "";
+  for (var p = 1; p <= totalPag; p++) pagBtns += '<button class="' + (p === f.page ? "is-active" : "") + '" data-act="page" data-p="' + p + '" type="button">' + p + "</button>";
+  $("#cliPag").innerHTML = "<span>Mostrando " + (arr.length ? (f.page - 1) * PAGE + 1 : 0) + " a " + Math.min(f.page * PAGE, arr.length) + " de " + arr.length + "</span>" +
+    '<div class="pager"><button data-act="page" data-p="' + Math.max(1, f.page - 1) + '" type="button">‹</button>' + pagBtns + '<button data-act="page" data-p="' + Math.min(totalPag, f.page + 1) + '" type="button">›</button></div>';
+
+  var nSel = Object.keys(f.sel).filter(function (k) { return f.sel[k]; }).length;
+  $("#bulkBar").hidden = nSel === 0;
+  $("#bulkCount").textContent = nSel + " selecionado(s)";
+}
+/* ============ ficha ============ */
+function timelineDe(c) {
+  var ev = [];
+  c.compras.forEach(function (p) { ev.push({ data: p.data, tipo: "Compra", nota: brl(p.valor) + " — " + p.lente + " · atendida por " + p.atend }); });
+  OS.forEach(function (o) {
+    if (o.cid !== c.id) return;
+    ev.push({ data: o.aberta, tipo: "OS " + o.n + " aberta", nota: o.lente + " no laboratório " + o.lab + ", prometida para " + dtBR(o.prometida) });
+    if (o.entregue) ev.push({ data: o.entregue, tipo: "OS " + o.n + " entregue", nota: osStatus(o).label });
+  });
+  TAREFAS.forEach(function (t) {
+    if (t.cid !== c.id || t.status !== "concluida") return;
+    ev.push({ data: t.data, tipo: "Tarefa concluída", nota: t.titulo + (t.resultado ? " — " + t.resultado : "") });
+  });
+  if (c.orcamento) ev.push({ data: c.orcamento.desde, tipo: "Orçamento", nota: brl(c.orcamento.valor) + " — " + c.orcamento.item + ", em aberto" });
+  var e = info(c);
+  if (e.janela.k === "vencida") ev.push({ data: HOJE, tipo: "Janela vencida", nota: "Cliente na lista priorizada de recompra (" + e.janela.label.toLowerCase() + ")" });
+  ev.sort(function (a, b) { return a.data < b.data ? 1 : -1; });
+  return ev;
+}
+function iaTexto(c) {
+  var e = info(c);
+  var t = [];
+  if (!c.compras.length) {
+    t.push("Contato novo, ainda sem compra. Chegou por " + c.origem.toLowerCase() + " e tem orçamento de " + brl(c.orcamento ? c.orcamento.valor : 0) + " em aberto. A primeira compra define se vira cliente: prioridade é responder rápido e facilitar a decisão.");
+    t.push("<strong>Melhor abordagem:</strong> retomar o orçamento oferecendo condição de primeira compra, sem desconto direto. Confirmar se a receita está em mãos.");
+  } else {
+    var partes = [];
+    partes.push("Cliente de " + c.tipo.toLowerCase() + (c.marca !== "Outras" ? " " + c.marca : "") + " com " + c.compras.length + " compra" + (c.compras.length > 1 ? "s" : "") + " e ticket médio de " + brl(e.ticket) + ".");
+    if (e.janela.k === "vencida") partes.push("Está com a janela de troca vencida (" + e.janela.label.toLowerCase() + ")" + (e.gar.k === "venc" ? " e a garantia expirou" : "") + ".");
+    else if (e.janela.k === "janela") partes.push("Entrou na janela de troca: é o momento de agir antes que compre em outro lugar.");
+    else partes.push("Compra recente: o foco agora é pós-venda bem feito, não oferta.");
+    if (!c.segundoPar && c.compras.length) partes.push("Não tem segundo par, que é a lacuna óbvia da ficha.");
+    t.push(partes.join(" "));
+    if (e.janela.k === "vencida") t.push("<strong>Melhor abordagem:</strong> convidar para revisão de grau sem falar em venda. Se o grau mudou, a troca acontece sozinha; se não mudou, oferecer " + (c.segundoPar ? "atualização de armação" : "solar com grau") + ".");
+    else if (c.orcamento) t.push("<strong>Melhor abordagem:</strong> retomar o orçamento de " + brl(c.orcamento.valor) + " aberto há " + e.orcDias + " dias, reforçando prazo de entrega e parcelamento.");
+    else t.push("<strong>Melhor abordagem:</strong> conferir adaptação e garantir avaliação positiva; cliente satisfeito nessa fase indica.");
+  }
+  return t;
+}
+function msgsDe(c) {
+  var e = info(c);
+  var nome = c.nome.split(" ")[0];
+  var msgs = [];
+  if (e.janela.k === "vencida") {
+    msgs.push("Oi, " + nome + "! Aqui é a Camila, da Bless Ótica. Faz um tempinho que você pegou seu óculos com a gente. Quer marcar uma revisão de grau sem compromisso? " + (c.atendimento === "Ótica Móvel" ? "Se ficar mais fácil, a gente vai até você com a Ótica Móvel." : "Leva 15 minutinhos aqui na Voluntários da Pátria."));
+    msgs.push("Oi, " + nome + ", tudo bem? Camila da Bless aqui. Seu " + c.lente + " já está com " + (e.mUlt || 0) + " meses de uso e a gente costuma recomendar uma conferida no grau nessa fase. Que dia fica bom pra você?");
+  } else if (c.orcamento) {
+    msgs.push("Oi, " + nome + "! Camila da Bless aqui. Ficou alguma dúvida no orçamento do " + c.orcamento.item + "? Consigo segurar esse valor até sexta e dá pra fazer em 12x sem juros.");
+    msgs.push("Oi, " + nome + ", tudo certo? Sobre o orçamento de " + brl(c.orcamento.valor) + ": se quiser, agendo a medição e seu óculos fica pronto na semana que vem.");
+  } else {
+    msgs.push("Oi, " + nome + "! Camila da Bless aqui. Como está a adaptação com o óculos novo? Qualquer ajuste na armação é só passar aqui, é rapidinho e sem custo.");
+    msgs.push("Oi, " + nome + "! Aqui é a Camila, da Bless. Chegaram armações novas que têm tudo a ver com você. Quando quiser dar uma olhada, me chama!");
+  }
+  return msgs;
+}
+function renderFicha() {
+  var c = cli(state.fichaId);
+  if (!c) { $("#fichaPanel").innerHTML = "<p class='muted'>Cliente não encontrado.</p>"; return; }
+  var e = info(c);
+  var tl = timelineDe(c);
+  var osDoCliente = OS.filter(function (o) { return o.cid === c.id; });
+  var tarefasDoCliente = TAREFAS.filter(function (t) { return t.cid === c.id; });
+  var faltando = [];
+  if (!c.email) faltando.push("e-mail");
+  if (!c.compras.length) faltando.push("primeira compra");
+  var abas = [["overview","Visão geral"],["compras","Compras"],["os","Ordens de serviço"],["tarefas","Tarefas"],["timeline","Timeline"],["ia","🧠 Resumo IA"]];
+  var msgs = msgsDe(c);
+  var msg = msgs[state.msgIdx % msgs.length];
+
+  $("#fichaPanel").innerHTML =
+    '<button class="link-btn" data-go="clientes" type="button" style="margin-bottom:.7rem;display:inline-block;">← Voltar para Clientes</button>' +
+    '<div class="profile-head"><div>' +
+      '<h2 class="profile-name">' + esc(c.nome) + (e.ticket >= 1400 ? ' <span class="chip is-brand">Ticket alto</span>' : "") + "</h2>" +
+      '<div class="profile-meta"><span><em>WhatsApp</em> ' + fmtFone(c.fone) + "</span>" + (c.email ? "<span><em>E-mail</em> " + esc(c.email) + "</span>" : "") + "<span><em>Local</em> " + esc(c.bairro) + ", Pelotas/RS</span></div>" +
+      '<div class="profile-badges">' +
+        '<span class="chip">' + (c.compras.length ? "Cliente" : "Lead") + "</span>" +
+        '<span class="chip ' + e.janela.cls + '">' + e.janela.label + "</span>" +
+        (e.gar.k === "venc" ? '<span class="chip is-warn">Garantia expirada</span>' : e.gar.k === "avencer" ? '<span class="chip is-warn">Garantia ' + e.gar.label.toLowerCase() + "</span>" : "") +
+        (e.aniv ? '<span class="chip is-info">🎂 Aniversário hoje</span>' : "") +
+        (c.orcamento ? '<span class="chip is-warn">Orçamento ' + brl(c.orcamento.valor) + "</span>" : "") +
+        c.tags.map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("") +
+      "</div></div>" +
+    '<div class="profile-actions">' +
+      '<button class="btn" data-zap="' + c.id + '" type="button">WhatsApp</button>' +
+      '<button class="btn-ghost" data-act="editar-cliente" type="button">✎ Editar</button>' +
+      '<button class="btn-ghost" data-act="nova-tarefa" data-cid="' + c.id + '" type="button">Nova tarefa</button>' +
+      '<details class="more-menu"><summary>Mais ações</summary><div class="more-pop">' +
+        '<button class="more-item" data-act="ir-ia" type="button">Consultar IA comercial</button>' +
+        '<button class="more-item" data-act="disparo" data-tipo="revisão de grau" type="button">Disparar convite de revisão</button>' +
+        '<button class="more-item" data-act="disparo" data-tipo="campanha de troca" type="button">Disparar campanha de troca</button>' +
+        '<button class="more-item" data-act="nova-os" type="button">Abrir ordem de serviço</button>' +
+        '<button class="more-item" data-act="toast" data-msg="Link de pesquisa NPS copiado." type="button">Pegar link de pesquisa (NPS)</button>' +
+      "</div></details></div></div>" +
+    (faltando.length ? '<button class="incompleto" data-act="editar-cliente" type="button">Cadastro incompleto: falta ' + faltando.join(" e ") + ". Clique para completar.</button>" : "") +
+    '<div class="ficha-layout">' +
+      '<aside class="ficha-side"><h4 class="fs-title">Resumo do cliente</h4><div class="fs-items">' +
+        '<div class="fs-item"><span class="fs-label">Última compra</span><strong>' + (e.ultCompra ? dias(e.ultCompra, HOJE) + " dias atrás" : "Sem compras") + "</strong>" + (e.ultCompra ? "<small>" + brl(e.ultValor) + " em " + dtBR(e.ultCompra) + "</small>" : "") + "</div>" +
+        '<div class="fs-item"><span class="fs-label">Janela de troca</span><strong' + (e.janela.k === "vencida" ? ' style="color:var(--danger-ink)"' : "") + ">" + e.janela.label + "</strong><small>" + c.tipo + ": troca prevista em " + e.limite + " meses</small></div>" +
+        '<div class="fs-item"><span class="fs-label">Ticket médio</span><strong>' + (e.ticket ? brl(e.ticket) : "—") + "</strong></div>" +
+        '<div class="fs-item"><span class="fs-label">Total acumulado (LTV)</span><strong>' + brl(e.ltv) + "</strong><small>" + c.compras.length + " compra(s)</small></div>" +
+        '<div class="fs-item"><span class="fs-label">Garantia</span><strong' + (e.gar.k === "venc" ? ' class="muted"' : "") + ">" + e.gar.label + "</strong></div>" +
+        '<div class="fs-item"><span class="fs-label">Segundo par</span><strong>' + (c.segundoPar ? "Tem" : "Não tem") + "</strong>" + (!c.segundoPar && c.compras.length ? "<small>oportunidade de solar com grau</small>" : "") + "</div>" +
+        '<div class="fs-item"><span class="fs-label">Atendimento</span><strong>' + esc(c.atendimento) + "</strong><small>resp.: " + esc(c.resp) + "</small></div>" +
+      "</div>" +
+      '<div class="d-note"><b>Mesma coluna do CRM da Meal Time, outras contas.</b> Lá: vendas em 6 meses e cashback. Aqui: janela de troca, garantia e segundo par, os três gatilhos de venda de uma ótica.</div></aside>' +
+      "<div>" +
+        '<div class="tabs">' + abas.map(function (a) { return '<button class="tab' + (state.tab === a[0] ? " is-active" : "") + '" data-act="tab" data-t="' + a[0] + '" type="button">' + a[1] + "</button>"; }).join("") + "</div>" +
+        '<div id="tabBody">' + renderTabBody(c, e, tl, osDoCliente, tarefasDoCliente, msg) + "</div>" +
+      "</div></div>";
+}
+function renderTabBody(c, e, tl, osC, tarC, msg) {
+  if (state.tab === "overview") {
+    var campos = [
+      ["Nome", c.nome], ["Celular (WhatsApp)", fmtFone(c.fone)], ["E-mail", c.email || "—"], ["Nascimento", dtBR(c.nasc)],
+      ["Bairro", c.bairro], ["Cidade / UF", "Pelotas / RS"], ["Origem", c.origem], ["Tipo de lente", c.tipo],
+      ["Marca", c.marca], ["Lente", c.lente], ["Tratamento", c.tratamento], ["Armação", c.armacao],
+      ["Data da receita", dtBR(c.receita)], ["Garantia", c.garantiaAte ? "até " + dtBR(c.garantiaAte) : "—"],
+      ["Segundo par", c.segundoPar ? "Tem" : "Não tem"], ["Atendimento", c.atendimento], ["Responsável", c.resp],
+      ["Cliente desde", c.compras.length ? mesAno(c.compras[0].data) : "—"]
+    ];
+    return '<div class="info-grid">' + campos.map(function (f) { return '<div class="info-item"><label>' + f[0] + "</label><span>" + esc(f[1]) + "</span></div>"; }).join("") + "</div>" +
+      '<div class="d-note"><b>Campos de ótica entram, campo clínico não.</b> Não existe campo de grau (esférico, cilíndrico, eixo): receita é dado sensível pela LGPD e fica fora desta fase por decisão de projeto.</div>';
+  }
+  if (state.tab === "compras") {
+    return '<div class="twrap"><table class="tbl"><thead><tr><th>Data</th><th>Produto</th><th>Lente</th><th class="td-r">Valor</th><th>Atendente</th></tr></thead><tbody>' +
+      (c.compras.slice().reverse().map(function (p) { return "<tr><td class='num'>" + dtBR(p.data) + "</td><td>" + esc(p.produto) + "</td><td>" + esc(p.lente) + "</td><td class='num td-r'>" + brl(p.valor) + "</td><td>" + esc(p.atend) + "</td></tr>"; }).join("") ||
+      '<tr><td colspan="5" class="muted" style="padding:1rem;">Nenhuma compra registrada ainda.</td></tr>') + "</tbody></table></div>";
+  }
+  if (state.tab === "os") {
+    return '<div class="twrap"><table class="tbl"><thead><tr><th>OS</th><th>Aberta</th><th>Lente</th><th>Laboratório</th><th>Prometida</th><th>Situação</th></tr></thead><tbody>' +
+      (osC.map(function (o) { var s = osStatus(o); return "<tr><td class='num'>" + o.n + "</td><td class='num'>" + dtBR(o.aberta) + "</td><td>" + esc(o.lente) + "</td><td>" + esc(o.lab) + "</td><td class='num'>" + dtBR(o.prometida) + "</td><td><span class='chip " + s.cls + "'>" + s.label + "</span></td></tr>"; }).join("") ||
+      '<tr><td colspan="6" class="muted" style="padding:1rem;">Nenhuma ordem de serviço.</td></tr>') + "</tbody></table></div>" +
+      '<div class="d-note"><b>Aba nova.</b> A OS é o eixo operacional da ótica e não tem equivalente na Meal Time: liga prazo do laboratório a atraso e reclamação, com número.</div>';
+  }
+  if (state.tab === "tarefas") {
+    return tarC.length ? tarC.map(function (t) {
+      return '<div class="hist-entry"><span class="he-date">' + dtBR(t.data).slice(0, 5) + " " + t.hora + '</span><span class="he-type">' + esc(t.titulo) + "</span>" +
+        (t.status === "concluida" ? '<span class="chip is-ok">Concluída</span>' : '<button class="link-btn" data-act="task-toggle" data-id="' + t.id + '" type="button">Concluir →</button>') +
+        '<span class="he-note">' + esc(t.tipo) + " · " + esc(t.resp) + (t.resultado ? " — " + esc(t.resultado) : "") + "</span></div>";
+    }).join("") : '<p class="muted" style="font-size:.85rem;">Nenhuma tarefa vinculada.</p>';
+  }
+  if (state.tab === "timeline") {
+    return tl.map(function (ev) {
+      return '<div class="hist-entry"><span class="he-date">' + dtBR(ev.data) + '</span><span class="he-type">' + esc(ev.tipo) + '</span><span></span><span class="he-note">' + esc(ev.nota) + "</span></div>";
+    }).join("");
+  }
+  /* ia */
+  return '<div class="ai-block"><span class="ai-label">Leitura da IA · atualizada hoje</span>' +
+    iaTexto(c).map(function (p) { return "<p>" + p + "</p>"; }).join("") + "</div>" +
+    '<div class="panel-head" style="margin-top:1rem;"><div><p class="eyebrow">Sugestão de mensagem</p><h3 style="font-size:.95rem;">No tom da Bless, pronta para editar</h3></div><span class="chip is-brand">Variação ' + ((state.msgIdx % 2) + 1) + " de 2</span></div>" +
+    '<p class="msg-preview" id="msgPreview">' + esc(msg) + "</p>" +
+    '<div class="toolbar" style="margin-top:.8rem;">' +
+      '<button class="btn" data-zap="' + c.id + '" data-comtexto="1" type="button">Enviar no WhatsApp</button>' +
+      '<button class="btn-ghost" data-act="outra-msg" type="button">Gerar outra versão</button>' +
+    "</div>" +
+    '<div class="d-note"><b>Mesmo motor de IA da Meal Time, outro contexto.</b> Em vez de kit e cardápio, ela lê tipo de lente, garantia, janela de troca e segundo par.</div>';
+}
+/* ============ otica movel ============ */
+function renderMovel() {
+  var visitas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; })
+    .sort(function (a, b) { return (a.data + a.hora) < (b.data + b.hora) ? -1 : 1; });
+  var vencRota = CLIENTES.filter(function (c) { var e = info(c); return c.atendimento === "Ótica Móvel" && e.janela.k === "vencida"; });
+  var potencial = vencRota.reduce(function (s, c) { return s + info(c).ultValor; }, 0) + 6 * 900;
+  var entregas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.titulo.indexOf("Entrega") === 0 && t.status !== "concluida"; }).length;
+
+  var kpis =
+    '<div class="kpi-band">' +
+      '<div class="kpi-tile"><span class="k-label">Visitas agendadas</span><span class="k-val">' + visitas.length + '</span><span></span><span class="k-delta flat">quarta, 5 de agosto</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Vencidos na rota</span><span class="k-val">' + (vencRota.length + 6) + '</span><span></span><span class="k-delta flat">' + vencRota.length + " da base + 6 do Residencial Recanto</span></div>" +
+      '<div class="kpi-tile"><span class="k-label">Potencial da rota</span><span class="k-val">' + brl(potencial) + '</span><span></span><span class="k-delta up">pelo ticket de cada um</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Entregas na carona</span><span class="k-val">' + entregas + '</span><span></span><span class="k-delta flat">OS prontas no trajeto</span></div>' +
+    "</div>";
+
+  var lista = visitas.map(function (t) {
+    var c = t.cid ? cli(t.cid) : null;
+    var e = c ? info(c) : null;
+    return '<div class="route-item"><span class="route-time">' + t.hora + '</span>' +
+      '<div class="grow"><div class="t-title">' + esc(t.titulo.replace("Visita Ótica Móvel: ", "")) + "</div>" +
+      '<div class="t-sub">' + (c ? esc(c.bairro) + " · " + esc(c.lente) + " · " + e.janela.label.toLowerCase() : "visita coletiva agendada") + "</div></div>" +
+      (c && e.janela.k === "vencida" ? '<span class="chip is-danger">ticket ' + brl(e.ultValor) + "</span>" : "") +
+      (c ? '<button class="link-btn" data-ficha="' + c.id + '" type="button">Abrir ficha</button>' : '<button class="link-btn" data-act="toast" data-msg="Lista coletiva do Residencial Recanto aberta." type="button">Abrir lista</button>') +
+      '<button class="link-btn" data-act="task-toggle" data-id="' + t.id + '" type="button">Concluir</button></div>';
+  }).join("");
+
+  $("#movelContent").innerHTML = kpis +
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Quarta, 5 de agosto · Rafael</p><h3>Laranjal e Areal</h3></div><span class="chip is-brand">Rota montada pela base vencida</span></div>' +
+    (lista || '<p class="muted">Nenhuma visita agendada. Clique em Montar roteiro.</p>') +
+    '<div class="d-note"><b>Módulo exclusivo da Bless.</b> Não existe na Meal Time nem em nenhum dos 5 sistemas de ótica pesquisados. A rota nasce de quem está vencido em cada bairro, e as entregas prontas pegam carona no trajeto.</div></section>';
+}
+
+/* ============ laboratorio ============ */
+function renderLab() {
+  var abertas = OS.filter(function (o) { return !o.entregue; });
+  var passadas = OS.filter(function (o) { return o.entregue; });
+  var rows = abertas.map(function (o) {
+    var s = osStatus(o);
+    var atrasada = dias(o.prometida, HOJE) > 0;
+    return "<tr><td class='num'>" + o.n + "</td>" +
+      '<td><button class="link-btn" data-ficha="' + o.cid + '" type="button">' + esc(nomeDe(o.cid)) + "</button></td>" +
+      "<td>" + esc(o.lente) + "</td><td>" + esc(o.lab) + "</td><td class='num'>" + dtBR(o.aberta) + "</td><td class='num'>" + dtBR(o.prometida) + "</td>" +
+      "<td><span class='chip " + s.cls + "'>" + s.label + "</span>" + (o.obs ? "<div class='cel-sub'>" + esc(o.obs) + "</div>" : "") + "</td>" +
+      "<td>" + (atrasada ? '<button class="link-btn" data-zap="' + o.cid + '" data-os="' + o.n + '" type="button">Avisar cliente</button>' : '<button class="link-btn" data-act="os-entregar" data-n="' + o.n + '" type="button">Marcar entregue</button>') + "</td></tr>";
+  }).join("");
+  var hist = passadas.map(function (o) {
+    var s = osStatus(o);
+    return "<tr><td class='num'>" + o.n + "</td><td>" + esc(nomeDe(o.cid)) + "</td><td>" + esc(o.lente) + "</td><td>" + esc(o.lab) + "</td><td class='num'>" + dtBR(o.aberta) + "</td><td class='num'>" + dtBR(o.entregue) + "</td><td><span class='chip " + s.cls + "'>" + s.label + "</span></td><td></td></tr>";
+  }).join("");
+  $("#osTableWrap").innerHTML = '<table class="tbl" style="min-width:52rem"><thead><tr><th>OS</th><th>Cliente</th><th>Lente</th><th>Laboratório</th><th>Aberta</th><th>Prometida / Entregue</th><th>Situação</th><th>Ação</th></tr></thead><tbody>' + rows + hist + "</tbody></table>";
+}
+
+/* ============ automacoes ============ */
+function renderRegras() {
+  $("#regrasList").innerHTML = REGRAS.map(function (r) {
+    return '<div class="rule"><button class="switch' + (r.ativa ? "" : " off") + '" data-act="regra" data-id="' + r.id + '" type="button" aria-label="Ativar ou pausar regra"></button>' +
+      '<span class="when-pill">' + esc(r.quando) + '</span><span class="grow">' + esc(r.acao) + "</span>" +
+      '<span class="chip ' + (r.ativa ? "is-ok" : "") + '">' + (r.ativa ? "Ativa" : "Pausada") + "</span></div>";
+  }).join("");
+}
+
+/* ============ relatorios ============ */
+function renderRelatorios() {
+  var r = calcResumo();
+  var compradores = CLIENTES.filter(function (c) { return c.compras.length; });
+  var recompra = compradores.filter(function (c) { return c.compras.length >= 2; });
+  var txRec = Math.round(recompra.length / compradores.length * 100);
+  var comPar = compradores.filter(function (c) { return c.segundoPar; });
+  var txPar = Math.round(comPar.length / compradores.length * 100);
+  var entregues = OS.filter(function (o) { return o.entregue; });
+  var prazoMedio = Math.round(entregues.reduce(function (s, o) { return s + dias(o.aberta, o.entregue); }, 0) / entregues.length);
+  var fech2026 = 0;
+  CLIENTES.forEach(function (c) { c.compras.forEach(function (p) { if (p.data.slice(0, 4) === "2026") fech2026++; }); });
+  var conv = Math.round(fech2026 / (fech2026 + r.orc.length) * 100);
+
+  $("#repKpis").innerHTML =
+    '<div class="kpi-tile"><span class="k-label">Taxa de recompra da base</span><span class="k-val">' + txRec + "%</span>" + spark([28, 31, 35, 38, 42, 46]) + '<span class="k-delta up">▲ ' + recompra.length + " de " + compradores.length + " clientes voltaram</span></div>" +
+    '<div class="kpi-tile"><span class="k-label">Conversão de orçamento</span><span class="k-val">' + conv + "%</span>" + spark([30, 33, 38, 41, 44, 50]) + '<span class="k-delta up">' + fech2026 + " fechados · " + r.orc.length + " em aberto</span></div>" +
+    '<div class="kpi-tile"><span class="k-label">Taxa de segundo par</span><span class="k-val">' + txPar + "%</span>" + spark([8, 9, 11, 12, 14, 15]) + '<span class="k-delta down">meta 30%</span></div>' +
+    '<div class="kpi-tile"><span class="k-label">Prazo médio do laboratório</span><span class="k-val">' + prazoMedio + "d</span>" + spark([12, 11, 10, 10, 9, 9]) + '<span class="k-delta flat">' + r.osAtrasadas.length + " atraso em aberto</span></div>";
+
+  var total = CLIENTES.length;
+  $("#repBaseTitle").textContent = "Onde estão os " + total + " clientes";
+  function barra(label, arr, cor) {
+    var pct = Math.round(arr.length / total * 100);
+    return '<div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.3rem;"><span>' + label + '</span><span class="num">' + arr.length + " · " + pct + '%</span></div><div class="minibar" style="height:8px"><i style="width:' + pct + "%" + (cor ? ";background:var(--" + cor + ")" : "") + '"></i></div></div>';
+  }
+  $("#repBars").innerHTML =
+    barra("Em dia (compra recente)", r.emdia) +
+    barra("Na janela de troca", r.janela, "warn") +
+    barra("Janela vencida", r.vencidos, "danger") +
+    barra("Cadastro sem compra", r.sem, "line-strong");
+
+  $("#repLab").innerHTML = '<div class="info-grid">' +
+    '<div class="info-item"><label>OS entregues no prazo</label><span>' + entregues.filter(function (o) { return dias(o.prometida, o.entregue) <= 0; }).length + " de " + entregues.length + "</span></div>" +
+    '<div class="info-item"><label>Garantias expiradas</label><span>' + r.garVenc.length + " clientes</span></div>" +
+    '<div class="info-item"><label>Garantias vencendo em 30d</label><span>' + r.gar30.length + " cliente(s)</span></div>" +
+    '<div class="info-item"><label>Multifocal premium sem revisão</label><span>' + r.multiSemSolar.length + " clientes</span></div>" +
+    "</div>";
+}
+
+/* ============ csv ============ */
+function baixarCSV(nome, linhas) {
+  try {
+    var csv = "﻿" + linhas.map(function (l) { return l.join(";"); }).join("\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = nome;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast("Arquivo " + nome + " exportado.");
+  } catch (e) { toast("Exportação bloqueada neste ambiente de demonstração.", "warn"); }
+}
+function csvClientes() {
+  var linhas = [["Nome","WhatsApp","Bairro","Tipo","Lente","Última compra","Janela","Garantia","Ticket","LTV","Resp."]];
+  cliFiltrados().forEach(function (c) {
+    var e = c._e;
+    linhas.push([c.nome, fmtFone(c.fone), c.bairro, c.tipo, c.lente, dtBR(e.ultCompra), e.janela.label, e.gar.label, e.ultValor, e.ltv, c.resp]);
+  });
+  baixarCSV("clientes-bless.csv", linhas);
+}
+function csvRelatorio() {
+  var r = calcResumo();
+  baixarCSV("relatorio-bless.csv", [
+    ["Indicador","Valor"],
+    ["Clientes na base", CLIENTES.length],
+    ["Janela vencida", r.vencidos.length],
+    ["Na janela", r.janela.length],
+    ["Em dia", r.emdia.length],
+    ["Sem compra", r.sem.length],
+    ["Valor parado (vencidos)", r.parado],
+    ["Orçamentos abertos", r.orc.length],
+    ["OS em aberto", r.osAbertas.length]
+  ]);
+}
+
+/* ============ palette ============ */
+function palRender(q) {
+  q = (q || "").toLowerCase();
+  var res = "";
+  var cl = CLIENTES.filter(function (c) { return !q || c.nome.toLowerCase().indexOf(q) > -1 || c.fone.indexOf(q.replace(/\D/g, "") || "␀") > -1; }).slice(0, 5);
+  if (cl.length) res += '<div class="pal-group">Clientes</div>' + cl.map(function (c) {
+    return '<button class="pal-item" data-ficha="' + c.id + '" type="button"><span class="avatar">' + iniciais(c.nome) + "</span>" + esc(c.nome) + '<span class="sub">' + esc(c.bairro) + "</span></button>";
+  }).join("");
+  var ts = TAREFAS.filter(function (t) { return t.status !== "concluida" && (!q || t.titulo.toLowerCase().indexOf(q) > -1); }).slice(0, 4);
+  if (ts.length) res += '<div class="pal-group">Tarefas</div>' + ts.map(function (t) {
+    return '<button class="pal-item" data-act="pal-task" type="button">' + esc(t.titulo) + '<span class="sub">' + dtBR(t.data).slice(0, 5) + " " + t.hora + "</span></button>";
+  }).join("");
+  var acoes = [["novo-cliente","Novo cliente"],["nova-tarefa","Nova tarefa"],["nova-os","Abrir ordem de serviço"]].filter(function (a) { return !q || a[1].toLowerCase().indexOf(q) > -1; });
+  if (acoes.length) res += '<div class="pal-group">Ações</div>' + acoes.map(function (a) {
+    return '<button class="pal-item" data-act="' + a[0] + '" type="button">' + a[1] + "</button>";
+  }).join("");
+  $("#palResults").innerHTML = res || '<p class="muted" style="padding:.8rem;font-size:.83rem;">Nada encontrado.</p>';
+}
+
+/* ============ acoes ============ */
+function abrirZap(c, texto) {
+  try { window.open("https://wa.me/55" + c.fone + (texto ? "?text=" + encodeURIComponent(texto) : ""), "_blank"); } catch (e) {}
+  toast("Abrindo WhatsApp de " + c.nome.split(" ")[0] + "...");
+}
+function fecharDialogs() { $$("dialog[open]").forEach(function (d) { d.close(); }); }
+
+document.addEventListener("click", function (ev) {
+  var el = ev.target.closest("[data-go],[data-ficha],[data-act],[data-zap],[data-close],[data-brand]");
+  if (!el) return;
+
+  if (el.dataset.close) { var dc = $("#" + el.dataset.close); if (dc) dc.close(); return; }
+  if (el.dataset.brand) {
+    var cor = el.dataset.brand, raiz = document.documentElement;
+    function rgbDe(h) { return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+    raiz.style.setProperty("--brand", cor);
+    raiz.style.setProperty("--brand-deep", "rgb(" + rgbDe(cor).map(function (v) { return Math.max(0, Math.round(v * 0.82)); }).join(",") + ")");
+    raiz.style.setProperty("--brand-soft", "rgba(" + rgbDe(cor).join(",") + ",.10)");
+    $$(".swatch").forEach(function (s) { s.setAttribute("aria-pressed", String(s === el)); });
+    return;
+  }
+  if (el.dataset.ficha) { fecharDialogs(); state.fichaId = el.dataset.ficha; state.tab = "overview"; state.msgIdx = 0; go("ficha"); return; }
+  if (el.dataset.zap) {
+    var cz = cli(el.dataset.zap);
+    if (!cz) return;
+    var texto = null;
+    if (el.dataset.comtexto) texto = msgsDe(cz)[state.msgIdx % 2];
+    else if (el.dataset.os) texto = "Oi, " + cz.nome.split(" ")[0] + "! Aqui é da Bless Ótica. Sua OS " + el.dataset.os + " atrasou no laboratório e já estamos cobrando. Assim que chegar, te aviso na hora. Desculpa a demora!";
+    abrirZap(cz, texto);
+    return;
+  }
+  if (el.dataset.go) { fecharDialogs(); go(el.dataset.go); return; }
+
+  var act = el.dataset.act;
+  if (!act) return;
+  if (act === "toast") { toast(el.dataset.msg || "Feito."); }
+  else if (act === "novo-cliente") { fecharDialogs(); $("#clienteForm").reset(); $("#clienteDlgTitle").textContent = "Novo cliente"; $("#clienteDlgSave").dataset.edit = ""; $("#clienteDlg").showModal(); }
+  else if (act === "editar-cliente") {
+    var ce = cli(state.fichaId);
+    $("#clienteDlgTitle").textContent = "Editar cliente";
+    $("#cfNome").value = ce.nome; $("#cfFone").value = fmtFone(ce.fone); $("#cfNasc").value = ce.nasc || "";
+    $("#cfBairro").value = ce.bairro; $("#cfOrigem").value = ce.origem; $("#cfTipo").value = ce.tipo;
+    $("#cfMarca").value = ce.marca; $("#cfAtend").value = ce.atendimento; $("#cfResp").value = ce.resp;
+    $("#clienteDlgSave").dataset.edit = ce.id;
+    $("#clienteDlg").showModal();
+  }
+  else if (act === "nova-tarefa") {
+    fecharDialogs();
+    var selC = $("#tfCliente");
+    selC.innerHTML = '<option value="">— sem cliente —</option>' + CLIENTES.map(function (c) { return '<option value="' + c.id + '">' + esc(c.nome) + "</option>"; }).join("");
+    if (el.dataset.cid) selC.value = el.dataset.cid;
+    $("#tarefaDlg").showModal();
+  }
+  else if (act === "nova-os") {
+    fecharDialogs();
+    $("#osCliente").innerHTML = CLIENTES.map(function (c) { return '<option value="' + c.id + '">' + esc(c.nome) + "</option>"; }).join("");
+    if (state.view === "ficha") $("#osCliente").value = state.fichaId;
+    $("#osDlg").showModal();
+  }
+  else if (act === "nova-regra") { $("#regraForm").reset(); $("#regraDlg").showModal(); }
+  else if (act === "regra") {
+    REGRAS.forEach(function (r) { if (r.id === el.dataset.id) { r.ativa = !r.ativa; toast(r.ativa ? "Regra ativada: " + r.acao : "Regra pausada: " + r.acao); } });
+    renderRegras();
+  }
+  else if (act === "task-toggle") {
+    TAREFAS.forEach(function (t) {
+      if (t.id === el.dataset.id) {
+        t.status = t.status === "concluida" ? "aberta" : "concluida";
+        toast(t.status === "concluida" ? "Tarefa concluída: " + t.titulo : "Tarefa reaberta: " + t.titulo);
+      }
+    });
+    renderNav(); renderView(state.view);
+  }
+  else if (act === "task-tab") { state.taskTab = el.dataset.t; state.taskDia = null; if (state.view !== "tarefas") go("tarefas"); else renderTarefas(); }
+  else if (act === "task-dia-limpa") { state.taskDia = null; renderTarefas(); }
+  else if (act === "cal-dia") { state.taskDia = state.taskDia === el.dataset.d ? null : el.dataset.d; renderTarefas(); }
+  else if (act === "situ") { state.cli.situ = el.dataset.s; state.cli.page = 1; renderClientes(); }
+  else if (act === "tipo") {
+    var i = state.cli.tipos.indexOf(el.dataset.s);
+    if (i > -1) state.cli.tipos.splice(i, 1); else state.cli.tipos.push(el.dataset.s);
+    state.cli.page = 1; renderClientes();
+  }
+  else if (act === "store") { state.cli.store = el.dataset.s; state.cli.page = 1; renderClientes(); }
+  else if (act === "ord") { state.cli.ord = el.dataset.s; renderClientes(); }
+  else if (act === "page") { state.cli.page = Number(el.dataset.p); renderClientes(); }
+  else if (act === "sel") { state.cli.sel[el.dataset.id] = el.checked; renderClientes(); }
+  else if (act === "aplicar-filtros") {
+    state.cli.marca = $("#fMarca").value; state.cli.tMin = $("#fTMin").value; state.cli.tMax = $("#fTMax").value;
+    state.cli.mMin = $("#fMMin").value; state.cli.mMax = $("#fMMax").value; state.cli.ord = $("#fOrd").value;
+    state.cli.page = 1; renderClientes(); toast("Filtros aplicados.");
+  }
+  else if (act === "limpar-filtros") {
+    state.cli = { situ: "all", tipos: [], marca: "all", tMin: "", tMax: "", mMin: "", mMax: "", ord: "urgencia", busca: "", store: state.cli.store, page: 1, sel: {} };
+    $("#fMarca").value = "all"; $("#fTMin").value = ""; $("#fTMax").value = ""; $("#fMMin").value = ""; $("#fMMax").value = ""; $("#fOrd").value = "urgencia"; $("#cliBusca").value = "";
+    renderClientes(); toast("Filtros limpos.");
+  }
+  else if (act === "filtro-rapido") {
+    state.cli.situ = { vencidos: "vencidos", janela: "janela", orc: "orc", aniv: "aniv", sempar: "sempar", movel: "movel" }[el.dataset.f] || "all";
+    state.cli.page = 1; go("clientes");
+  }
+  else if (act === "bulk-tarefa") {
+    var ids = Object.keys(state.cli.sel).filter(function (k) { return state.cli.sel[k]; });
+    ids.forEach(function (id) {
+      TAREFAS.push({ id: "t" + (seq++), titulo: "Contato de recompra", cid: id, tipo: "Recompra", data: "2026-08-05", hora: "09:00", resp: "Camila", status: "aberta" });
+    });
+    state.cli.sel = {};
+    toast(ids.length + " tarefas criadas para amanhã, 9h.");
+    renderNav(); renderClientes();
+  }
+  else if (act === "bulk-campanha") {
+    var n2 = Object.keys(state.cli.sel).filter(function (k) { return state.cli.sel[k]; }).length;
+    state.cli.sel = {};
+    toast("Campanha de WhatsApp preparada para " + n2 + " clientes (revisão antes do envio).");
+    renderClientes();
+  }
+  else if (act === "csv-clientes") csvClientes();
+  else if (act === "csv-relatorio") csvRelatorio();
+  else if (act === "tab") { state.tab = el.dataset.t; renderFicha(); }
+  else if (act === "ir-ia") { state.tab = "ia"; renderFicha(); }
+  else if (act === "outra-msg") { state.msgIdx++; renderFicha(); state.tab = "ia"; }
+  else if (act === "disparo") {
+    var cd = cli(state.fichaId);
+    abrirZap(cd, msgsDe(cd)[0]);
+  }
+  else if (act === "zap-aniv") {
+    var aniv = CLIENTES.filter(function (c) { return info(c).aniv; });
+    toast("Mensagem de parabéns preparada para " + aniv.length + " clientes.");
+  }
+  else if (act === "montar-roteiro") { toast("Roteiro remontado a partir da base vencida por bairro."); renderMovel(); }
+  else if (act === "os-entregar") {
+    OS.forEach(function (o) { if (o.n === Number(el.dataset.n)) { o.entregue = HOJE; toast("OS " + o.n + " marcada como entregue. Conferência de adaptação agendada para daqui a 7 dias."); TAREFAS.push({ id: "t" + (seq++), titulo: "Conferir adaptação (OS " + o.n + ")", cid: o.cid, tipo: "Pós-venda", data: "2026-08-11", hora: "10:00", resp: "Camila", status: "aberta" }); } });
+    renderNav(); renderLab();
+  }
+  else if (act === "pal-task") { fecharDialogs(); go("tarefas"); }
+});
+
+/* formularios */
+$("#clienteForm").addEventListener("submit", function () {
+  var editId = $("#clienteDlgSave").dataset.edit;
+  var digits = $("#cfFone").value.replace(/\D/g, "");
+  if (editId) {
+    var c = cli(editId);
+    c.nome = $("#cfNome").value; c.fone = digits.length >= 10 ? digits : c.fone; c.nasc = $("#cfNasc").value || c.nasc;
+    c.bairro = $("#cfBairro").value; c.origem = $("#cfOrigem").value; c.tipo = $("#cfTipo").value;
+    c.marca = $("#cfMarca").value; c.atendimento = $("#cfAtend").value; c.resp = $("#cfResp").value;
+    toast("Cadastro de " + c.nome.split(" ")[0] + " atualizado.");
+    renderFicha();
+  } else {
+    var novo = {
+      id: "c" + (seq++), nome: $("#cfNome").value, bairro: $("#cfBairro").value || "Centro", origem: $("#cfOrigem").value,
+      fone: digits.length >= 10 ? digits : "53990000000", email: "", nasc: $("#cfNasc").value || null,
+      tipo: $("#cfTipo").value, marca: $("#cfMarca").value, lente: "—", tratamento: "—", armacao: "—",
+      receita: HOJE, garantiaAte: null, segundoPar: false, atendimento: $("#cfAtend").value, resp: $("#cfResp").value, tags: [], compras: []
+    };
+    CLIENTES.push(novo);
+    toast("Cliente " + novo.nome.split(" ")[0] + " cadastrado.");
+    state.fichaId = novo.id; state.tab = "overview"; go("ficha");
+  }
+});
+$("#tarefaForm").addEventListener("submit", function () {
+  TAREFAS.push({ id: "t" + (seq++), titulo: $("#tfTitulo").value, cid: $("#tfCliente").value || null, tipo: $("#tfTipo").value, data: $("#tfData").value || HOJE, hora: $("#tfHora").value || "09:00", resp: $("#tfResp").value, status: "aberta" });
+  toast("Tarefa criada: " + $("#tfTitulo").value);
+  renderNav(); renderView(state.view);
+});
+$("#osForm").addEventListener("submit", function () {
+  var maxN = OS.reduce(function (m, o) { return Math.max(m, o.n); }, 0);
+  OS.push({ n: maxN + 1, cid: $("#osCliente").value, lente: $("#osLente").value || "Lente sob encomenda", lab: $("#osLab").value, aberta: HOJE, prometida: $("#osProm").value || "2026-08-14", entregue: null, obs: "" });
+  toast("OS " + (maxN + 1) + " aberta. Prazo monitorado automaticamente.");
+  renderNav(); if (state.view === "laboratorio") renderLab(); else go("laboratorio");
+});
+$("#regraForm").addEventListener("submit", function () {
+  REGRAS.push({ id: "r" + (seq++), quando: $("#rgQuando").value, acao: $("#rgAcao").value, ativa: true });
+  toast("Regra criada e ativada.");
+  renderRegras();
+});
+
+/* palette */
+$("#paletteTrigger").addEventListener("click", function () { $("#paletteDlg").showModal(); $("#palInput").value = ""; palRender(""); $("#palInput").focus(); });
+$("#palInput").addEventListener("input", function () { palRender(this.value); });
+document.addEventListener("keydown", function (ev) {
+  if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") { ev.preventDefault(); $("#paletteDlg").showModal(); $("#palInput").value = ""; palRender(""); $("#palInput").focus(); }
+});
+$$("dialog").forEach(function (d) { d.addEventListener("click", function (ev) { if (ev.target === d) d.close(); }); });
+
+/* busca de clientes */
+$("#cliBusca").addEventListener("input", function () { state.cli.busca = this.value; state.cli.page = 1; renderClientes(); });
+
+/* filtros recolhiveis */
+$("#filtersToggle").addEventListener("click", function () {
+  var p = $("#filterPanel");
+  var aberto = !p.hidden;
+  p.hidden = aberto;
+  this.setAttribute("aria-expanded", String(!aberto));
+});
+
+/* tema */
+$("#themeToggle").addEventListener("click", function () {
+  var atual = document.documentElement.getAttribute("data-theme");
+  if (!atual) atual = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  var novo = atual === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", novo);
+  try { sessionStorage.setItem("tema", novo); } catch (e) {}
+});
+try { var temaSalvo = sessionStorage.getItem("tema"); if (temaSalvo) document.documentElement.setAttribute("data-theme", temaSalvo); } catch (e) {}
+
+/* diff */
+$("#diffBtn").addEventListener("click", function () {
+  var on = document.body.classList.toggle("show-diff");
+  this.setAttribute("aria-pressed", String(on));
+  this.textContent = on ? "Esconder anotações" : "Mostrar o que mudou";
+});
+
+/* calendario nav */
+$("#calPrev").addEventListener("click", function () { state.cal.m--; if (state.cal.m < 0) { state.cal.m = 11; state.cal.y--; } renderCal(); });
+$("#calNext").addEventListener("click", function () { state.cal.m++; if (state.cal.m > 11) { state.cal.m = 0; state.cal.y++; } renderCal(); });
+
+/* boot */
+renderNav();
+renderResumo();
+</script>
+
+
