@@ -398,6 +398,34 @@
   .d-note { display: none; }
   body.show-diff .d-note { display: block; margin: .7rem 0 0; font-size: .78rem; line-height: 1.5; color: var(--warn-ink); background: var(--warn-soft); border-radius: var(--r-md); padding: .5rem .7rem; }
 
+  /* ---------- portao de avaliacao (7 dias) ---------- */
+  .gate {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg);
+    display: grid; place-items: center; padding: 1.5rem;
+  }
+  .gate[hidden] { display: none; }
+  .gate-card {
+    width: 100%; max-width: 24rem;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-xl); box-shadow: var(--shadow);
+    padding: 2rem 1.8rem; display: flex; flex-direction: column; gap: 1rem;
+  }
+  .gate-mark {
+    width: 46px; height: 46px; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+    color: var(--on-brand); display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 1.3rem;
+  }
+  .gate-card h2 { font-size: 1.2rem; }
+  .gate-card p { font-size: .85rem; color: var(--muted); }
+  .gate-card input {
+    background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+    padding: .6rem .7rem; color: var(--text); font: inherit; font-size: .95rem; width: 100%;
+    text-transform: uppercase; letter-spacing: .12em; font-family: var(--mono);
+  }
+  .gate-err { color: var(--danger-ink); font-size: .78rem; font-weight: 600; }
+
   .view { display: none; }
   .view.is-active { display: block; }
 
@@ -413,8 +441,9 @@
 </style>
 
 <div class="demobar">
-  <span class="tag">Demonstração</span>
-  <span>Amostra fictícia de 14 clientes. Mesma engenharia do CRM em produção na Meal Time.</span>
+  <span class="tag">Avaliação</span>
+  <span>Dados fictícios · integração de leitura com o ssOtica no plano real</span>
+  <span class="chip is-brand" id="trialChip" hidden style="background:rgba(255,255,255,.12);color:#dfe3ea;"></span>
   <span class="spacer"></span>
   <span class="swatches" title="Cor da marca">
     <button class="swatch" data-brand="#0d6157" style="background:#0d6157" aria-pressed="true" aria-label="Verde petróleo"></button>
@@ -526,7 +555,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Base</p>
-            <h2>Clientes <span class="chip" id="cliCount"></span></h2>
+            <h2>Clientes <span class="chip" id="cliCount"></span> <span class="chip is-ok" title="No plano real, a base é lida do seu ssOtica automaticamente">ssOtica · sincronizado há 2h</span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="csv-clientes" type="button">Exportar Excel</button>
@@ -613,12 +642,12 @@
       <section class="view" data-view="movel">
         <div class="view-head">
           <div>
-            <p class="eyebrow">Atendimento externo</p>
-            <h2>Ótica Móvel</h2>
+            <p class="eyebrow">Telemarketing e visitas</p>
+            <h2>Agendamento</h2>
           </div>
           <div class="view-actions">
-            <button class="btn-ghost" data-act="toast" data-msg="Mapa da rota aberto (recurso da versão final)." type="button">Ver mapa</button>
-            <button class="btn" data-act="montar-roteiro" type="button">Montar roteiro</button>
+            <button class="btn-ghost" data-act="toast" data-msg="Script de ligação aberto (recurso da versão final)." type="button">Scripts de ligação</button>
+            <button class="btn" data-act="montar-roteiro" type="button">Montar fila do dia</button>
           </div>
         </div>
         <div id="movelContent"></div>
@@ -714,7 +743,7 @@
       <div class="two">
         <div><label for="cfBairro">Bairro</label><input id="cfBairro"></div>
         <div><label for="cfOrigem">Origem</label>
-          <select id="cfOrigem"><option>Indicação</option><option>Instagram</option><option>Google</option><option>Rua</option><option>Ótica Móvel</option></select>
+          <select id="cfOrigem"><option>Indicação</option><option>Instagram</option><option>Google</option><option>Rua</option><option>Telemarketing</option></select>
         </div>
       </div>
       <div class="two">
@@ -727,7 +756,7 @@
       </div>
       <div class="two">
         <div><label for="cfAtend">Atendimento</label>
-          <select id="cfAtend"><option>Loja Centro</option><option>Ótica Móvel</option></select>
+          <select id="cfAtend"><option>Loja Centro</option><option>Visita em casa</option></select>
         </div>
         <div><label for="cfResp">Responsável</label>
           <select id="cfResp"><option>Camila</option><option>Rafael</option><option>Juliana</option></select>
@@ -753,7 +782,7 @@
       </div>
       <div class="two">
         <div><label for="tfTipo">Tipo</label>
-          <select id="tfTipo"><option>Recompra</option><option>Orçamento</option><option>Pós-venda</option><option>Ordem de serviço</option><option>Visita</option><option>Relacionamento</option></select>
+          <select id="tfTipo"><option>Recompra</option><option>Orçamento</option><option>Pós-venda</option><option>Ordem de serviço</option><option>Ligação</option><option>Agendamento</option><option>Relacionamento</option></select>
         </div>
         <div><label for="tfResp">Responsável</label>
           <select id="tfResp"><option>Camila</option><option>Rafael</option><option>Juliana</option></select>
@@ -803,6 +832,29 @@
 
 <div id="toasts" role="status" aria-live="polite"></div>
 
+<!-- portao de avaliacao -->
+<div class="gate" id="gate" hidden>
+  <form class="gate-card" id="gateForm">
+    <div class="gate-mark">B</div>
+    <div>
+      <h2>Bless Ótica · avaliação do CRM</h2>
+      <p>Acesso de demonstração por <strong>7 dias</strong>, com dados fictícios. Digite o código que o Talison te passou.</p>
+    </div>
+    <input id="gateCode" placeholder="CÓDIGO DE ACESSO" autocomplete="off" autocapitalize="characters">
+    <span class="gate-err" id="gateErr" hidden>Código incorreto. Confere com o Talison.</span>
+    <button class="btn" type="submit" style="justify-content:center;">Entrar na demonstração</button>
+  </form>
+</div>
+<div class="gate" id="gateExpired" hidden>
+  <div class="gate-card">
+    <div class="gate-mark">B</div>
+    <div>
+      <h2>Avaliação encerrada</h2>
+      <p>Os 7 dias de teste terminaram. Gostou do que viu? O Talison ativa a tua instância definitiva, com a tua base importada do ssOtica, em até 2 semanas.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 "use strict";
 /* ============ dados (amostra ficticia) ============ */
@@ -811,9 +863,9 @@ var HOJE = "2026-08-04";
 var CLIENTES = [
   { id:"c1",  nome:"Marlene Kruger",  bairro:"Centro",      origem:"Indicação",  fone:"53998142207", email:"marlene.kruger@gmail.com", nasc:"1962-06-14", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux Comfort",  tratamento:"AR + Transitions", armacao:"Acetato 54", receita:"2024-09-20", garantiaAte:"2025-10-02", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:["VIP"],
     compras:[{data:"2019-03-18",produto:"Óculos completo",lente:"Monofocal AR",valor:1270,atend:"Camila"},{data:"2022-03-05",produto:"Óculos completo",lente:"Varilux Liberty",valor:1480,atend:"Rafael"},{data:"2024-10-02",produto:"Óculos completo",lente:"Varilux Comfort",valor:1640,atend:"Camila"}] },
-  { id:"c2",  nome:"Sirlei Marques",  bairro:"Areal",       origem:"Rua",        fone:"53990507741", email:"", nasc:"1958-02-09", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2023-08-15", garantiaAte:"2024-09-02", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:[],
+  { id:"c2",  nome:"Sirlei Marques",  bairro:"Areal",       origem:"Rua",        fone:"53990507741", email:"", nasc:"1958-02-09", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2023-08-15", garantiaAte:"2024-09-02", segundoPar:false, atendimento:"Visita em casa", resp:"Rafael",  tags:[],
     compras:[{data:"2023-09-02",produto:"Óculos completo",lente:"Monofocal AR",valor:520,atend:"Rafael"}] },
-  { id:"c3",  nome:"Dilma Nunes",     bairro:"Laranjal",    origem:"Ótica Móvel",fone:"53984021173", email:"", nasc:"1949-11-02", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux XR",       tratamento:"AR + Blue",  armacao:"Acetato 53", receita:"2024-10-30", garantiaAte:"2025-11-08", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:["VIP","Não sai de casa"],
+  { id:"c3",  nome:"Dilma Nunes",     bairro:"Laranjal",    origem:"Ótica Móvel",fone:"53984021173", email:"", nasc:"1949-11-02", tipo:"Multifocal",     marca:"Varilux", lente:"Varilux XR",       tratamento:"AR + Blue",  armacao:"Acetato 53", receita:"2024-10-30", garantiaAte:"2025-11-08", segundoPar:false, atendimento:"Visita em casa", resp:"Rafael",  tags:["VIP","Não sai de casa"],
     compras:[{data:"2022-05-14",produto:"Óculos completo",lente:"Varilux Liberty",valor:1690,atend:"Rafael"},{data:"2024-11-08",produto:"Óculos completo",lente:"Varilux XR",valor:2180,atend:"Rafael"}] },
   { id:"c4",  nome:"Jocelí Ávila",    bairro:"Três Vendas", origem:"Instagram",  fone:"53991268890", email:"joceli.avila@hotmail.com", nasc:"1966-03-12", tipo:"Multifocal",     marca:"Zeiss",   lente:"Zeiss SmartLife",  tratamento:"AR + DuraVision", armacao:"Acetato 55", receita:"2025-03-01", garantiaAte:"2026-08-28", segundoPar:false, atendimento:"Loja Centro", resp:"Camila",  tags:[],
     compras:[{data:"2023-02-10",produto:"Óculos completo",lente:"Zeiss monofocal",valor:1520,atend:"Camila"},{data:"2025-03-20",produto:"Óculos completo",lente:"Zeiss SmartLife",valor:1890,atend:"Camila"}] },
@@ -831,7 +883,7 @@ var CLIENTES = [
     compras:[{data:"2025-01-10",produto:"Óculos completo",lente:"Monofocal AR",valor:640,atend:"Juliana"}] },
   { id:"c11", nome:"Paulo Régis",     bairro:"Fragata",     origem:"Google",     fone:"53998187702", email:"pauloregis90@gmail.com", nasc:"1990-04-25", tipo:"Monofocal",      marca:"Outras",  lente:"Monofocal AR",     tratamento:"AR + Blue", armacao:"Acetato 55", receita:"2024-05-30", garantiaAte:"2025-06-10", segundoPar:false, atendimento:"Loja Centro", resp:"Rafael",  tags:[],
     compras:[{data:"2024-06-10",produto:"Óculos completo",lente:"Monofocal AR",valor:690,atend:"Rafael"}], orcamento:{valor:780,desde:"2026-08-02",item:"Monofocal Blue"} },
-  { id:"c12", nome:"Tereza Lima",     bairro:"Areal",       origem:"Ótica Móvel",fone:"53984552210", email:"", nasc:"1944-12-01", tipo:"Multifocal",     marca:"Hoya",    lente:"Hoya multifocal",  tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2024-09-05", garantiaAte:"2025-09-22", segundoPar:false, atendimento:"Ótica Móvel", resp:"Rafael",  tags:["Não sai de casa"],
+  { id:"c12", nome:"Tereza Lima",     bairro:"Areal",       origem:"Ótica Móvel",fone:"53984552210", email:"", nasc:"1944-12-01", tipo:"Multifocal",     marca:"Hoya",    lente:"Hoya multifocal",  tratamento:"Antirreflexo", armacao:"Metal 52", receita:"2024-09-05", garantiaAte:"2025-09-22", segundoPar:false, atendimento:"Visita em casa", resp:"Rafael",  tags:["Não sai de casa"],
     compras:[{data:"2024-09-22",produto:"Óculos completo",lente:"Hoya multifocal",valor:1560,atend:"Rafael"}] },
   { id:"c13", nome:"Marcos Antunes",  bairro:"Centro",      origem:"Instagram",  fone:"53999021180", email:"marcosantunes98@gmail.com", nasc:"1998-10-05", tipo:"Solar com grau", marca:"Outras",  lente:"Solar com grau",   tratamento:"Polarizado", armacao:"Acetato 55", receita:"2026-05-28", garantiaAte:"2028-06-12", segundoPar:true, atendimento:"Loja Centro", resp:"Juliana", tags:[],
     compras:[{data:"2026-06-12",produto:"Solar com grau",lente:"Solar com grau",valor:720,atend:"Juliana"}] },
@@ -853,10 +905,10 @@ var TAREFAS = [
   { id:"t3",  titulo:"Avisar atraso da OS 2418", cid:"c6",  tipo:"Ordem de serviço", data:"2026-08-01", hora:"14:00", resp:"Rafael", status:"aberta" },
   { id:"t4",  titulo:"Convite de revisão de grau", cid:"c1",  tipo:"Recompra", data:"2026-08-04", hora:"16:00", resp:"Camila", status:"aberta" },
   { id:"t5",  titulo:"Parabéns aos 3 aniversariantes de hoje", cid:null, tipo:"Relacionamento", data:"2026-08-04", hora:"10:00", resp:"Camila", status:"aberta" },
-  { id:"t6",  titulo:"Visita Ótica Móvel: Dilma Nunes", cid:"c3",  tipo:"Visita", data:"2026-08-05", hora:"09:00", resp:"Rafael", status:"aberta" },
-  { id:"t7",  titulo:"Visita Ótica Móvel: Residencial Recanto (6 clientes)", cid:null, tipo:"Visita", data:"2026-08-05", hora:"10:30", resp:"Rafael", status:"aberta" },
-  { id:"t8",  titulo:"Visita Ótica Móvel: Sirlei Marques", cid:"c2",  tipo:"Visita", data:"2026-08-05", hora:"14:00", resp:"Rafael", status:"aberta" },
-  { id:"t9",  titulo:"Entrega da OS 2418 na rota", cid:"c6",  tipo:"Visita", data:"2026-08-05", hora:"15:30", resp:"Rafael", status:"aberta" },
+  { id:"t6",  titulo:"Visita agendada na loja: Jocelí Ávila", cid:"c4",  tipo:"Agendamento", data:"2026-08-05", hora:"09:00", resp:"Camila", status:"aberta" },
+  { id:"t7",  titulo:"Visita em casa: Dilma Nunes (não sai de casa)", cid:"c3", tipo:"Agendamento", data:"2026-08-05", hora:"10:30", resp:"Rafael", status:"aberta" },
+  { id:"t8",  titulo:"Ligação de reativação: Sirlei Marques", cid:"c2",  tipo:"Ligação", data:"2026-08-05", hora:"14:00", resp:"Rafael", status:"aberta" },
+  { id:"t9",  titulo:"Retirada da OS 2418 combinada na loja", cid:"c6",  tipo:"Agendamento", data:"2026-08-05", hora:"15:30", resp:"Rafael", status:"aberta" },
   { id:"t10", titulo:"Retomar orçamento de R$ 2.340", cid:"c8",  tipo:"Orçamento", data:"2026-07-30", hora:"15:00", resp:"Camila", status:"aberta" },
   { id:"t11", titulo:"Retomar orçamento de R$ 780", cid:"c11", tipo:"Orçamento", data:"2026-08-06", hora:"10:00", resp:"Rafael", status:"aguardando" },
   { id:"t12", titulo:"Conferir adaptação do solar", cid:"c13", tipo:"Pós-venda", data:"2026-06-29", hora:"10:00", resp:"Juliana", status:"concluida", resultado:"Sem queixas, adaptou bem" },
@@ -960,7 +1012,7 @@ var VIEWS = [
   { k: "tarefas",     titulo: "Tarefas",         icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>' },
   { k: "clientes",    titulo: "Clientes",        icon: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>' },
   { k: "ficha",       titulo: "Ficha do cliente",icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>' },
-  { k: "movel",       titulo: "Ótica Móvel",     icon: '<path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>' },
+  { k: "movel",       titulo: "Agendamento",     icon: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>' },
   { k: "laboratorio", titulo: "Laboratório",     icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>' },
   { k: "automacoes",  titulo: "Automações",      icon: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>' },
   { k: "relatorios",  titulo: "Relatórios",      icon: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>' }
@@ -968,7 +1020,7 @@ var VIEWS = [
 
 function badgeCounts() {
   var tHoje = TAREFAS.filter(function (t) { return t.status === "aberta" && (t.data === HOJE || taskLate(t)); }).length;
-  var visitas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; }).length;
+  var visitas = TAREFAS.filter(function (t) { return (t.tipo === "Agendamento" || t.tipo === "Ligação") && t.status !== "concluida"; }).length;
   var osAtr = OS.filter(function (o) { return !o.entregue && dias(o.prometida, HOJE) > 0; }).length;
   return { tarefas: tHoje, movel: visitas, laboratorio: osAtr };
 }
@@ -1100,10 +1152,10 @@ function renderResumo() {
     '<div class="s-list">' + linhas(r.multiSemSolar, function (c) { return lc(c, "ticket " + brl(c._e.ticket)); }) + "</div>" +
     '<div class="s-foot">Anexação</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M10 17h4V5H2v12h3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/>') + 'Ótica Móvel</h4><span class="chip is-brand">' + b.movel + ' visitas</span></div>' +
-    '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="movel" type="button">Clientes Móvel <strong>' + CLIENTES.filter(function (c) { return c.atendimento === "Ótica Móvel"; }).length + "</strong></button></div>" +
-    '<div class="s-list">' + TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; }).slice(0, 3).map(function (t) { return '<button class="s-line" data-go="movel" type="button">' + dtBR(t.data).slice(0, 5) + " " + t.hora + " · " + esc(t.titulo.replace("Visita Ótica Móvel: ", "")) + "</button>"; }).join("") + "</div>" +
-    '<div class="s-foot">Atendimento externo</div></article>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>') + 'Agendamento</h4><span class="chip is-brand">' + b.movel + ' na agenda</span></div>' +
+    '<div class="s-badges"><button class="s-mini" data-go="movel" type="button">Fila de ligações <strong>' + r.vencidos.length + "</strong></button></div>" +
+    '<div class="s-list">' + TAREFAS.filter(function (t) { return (t.tipo === "Agendamento" || t.tipo === "Ligação") && t.status !== "concluida"; }).slice(0, 3).map(function (t) { return '<button class="s-line" data-go="movel" type="button">' + dtBR(t.data).slice(0, 5) + " " + t.hora + " · " + esc(t.titulo) + "</button>"; }).join("") + "</div>" +
+    '<div class="s-foot">Telemarketing</div></article>' +
 
     '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M12 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 22v-2a7 7 0 0 1 14 0v2"/>') + 'Aniversariantes</h4><span class="chip is-ok">' + r.aniv.length + ' hoje</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-act="zap-aniv" type="button">Enviar parabéns aos ' + r.aniv.length + "</button></div>" +
@@ -1205,7 +1257,7 @@ var SITUS = [
   { k: "all", label: "Todos" }, { k: "vencidos", label: "Vencidos" }, { k: "janela", label: "Na janela" },
   { k: "emdia", label: "Em dia" }, { k: "semcompra", label: "Sem compra" }, { k: "aniv", label: "🎂 Aniversariantes hoje" },
   { k: "garvenc", label: "Garantia expirada" }, { k: "orc", label: "Orçamento aberto" },
-  { k: "sempar", label: "Sem segundo par" }, { k: "movel", label: "🚐 Ótica Móvel" }
+  { k: "sempar", label: "Sem segundo par" }, { k: "movel", label: "🏠 Visita em casa" }
 ];
 var TIPOS = ["Multifocal", "Monofocal", "Ocupacional", "Solar com grau"];
 
@@ -1221,7 +1273,7 @@ function cliFiltrados() {
   else if (f.situ === "garvenc") arr = arr.filter(function (c) { return c._e.gar.k === "venc"; });
   else if (f.situ === "orc") arr = arr.filter(function (c) { return !!c.orcamento; });
   else if (f.situ === "sempar") arr = arr.filter(function (c) { return c.compras.length && !c.segundoPar; });
-  else if (f.situ === "movel") arr = arr.filter(function (c) { return c.atendimento === "Ótica Móvel"; });
+  else if (f.situ === "movel") arr = arr.filter(function (c) { return c.atendimento === "Visita em casa"; });
   if (f.tipos.length) arr = arr.filter(function (c) { return f.tipos.indexOf(c.tipo) > -1; });
   if (f.marca !== "all") arr = arr.filter(function (c) { return c.marca === f.marca; });
   if (f.tMin !== "") arr = arr.filter(function (c) { return c._e.ultValor >= Number(f.tMin); });
@@ -1254,7 +1306,7 @@ function filtrosAtivos() {
 var PAGE = 6;
 function renderClientes() {
   var f = state.cli;
-  $("#storeChips").innerHTML = [["all","Todos"],["Loja Centro","Loja Centro"],["Ótica Móvel","Ótica Móvel"]].map(function (s) {
+  $("#storeChips").innerHTML = [["all","Todos"],["Loja Centro","Loja Centro"],["Visita em casa","Visita em casa"]].map(function (s) {
     return '<button class="fchip' + (f.store === s[0] ? " is-active" : "") + '" data-act="store" data-s="' + s[0] + '" type="button">' + s[1] + "</button>";
   }).join("");
   var r = calcResumo();
@@ -1281,7 +1333,7 @@ function renderClientes() {
     var sel = f.sel[c.id] ? " checked" : "";
     return "<tr>" +
       '<td><input type="checkbox" data-act="sel" data-id="' + c.id + '"' + sel + ' aria-label="Selecionar ' + esc(c.nome) + '"></td>' +
-      '<td><button class="link-btn cel-nome" data-ficha="' + c.id + '" type="button">' + esc(c.nome) + '</button><div class="cel-sub">' + esc(c.bairro) + (c.atendimento === "Ótica Móvel" ? " · 🚐" : "") + "</div></td>" +
+      '<td><button class="link-btn cel-nome" data-ficha="' + c.id + '" type="button">' + esc(c.nome) + '</button><div class="cel-sub">' + esc(c.bairro) + (c.atendimento === "Visita em casa" ? " · 🏠" : "") + "</div></td>" +
       '<td class="num">' + fmtFone(c.fone) + "</td>" +
       "<td>" + esc(c.lente) + '<div class="cel-sub">' + esc(c.tipo) + "</div></td>" +
       '<td class="num">' + dtBR(e.ultCompra) + "</td>" +
@@ -1353,7 +1405,7 @@ function msgsDe(c) {
   var nome = c.nome.split(" ")[0];
   var msgs = [];
   if (e.janela.k === "vencida") {
-    msgs.push("Oi, " + nome + "! Aqui é a Camila, da Bless Ótica. Faz um tempinho que você pegou seu óculos com a gente. Quer marcar uma revisão de grau sem compromisso? " + (c.atendimento === "Ótica Móvel" ? "Se ficar mais fácil, a gente vai até você com a Ótica Móvel." : "Leva 15 minutinhos aqui na Voluntários da Pátria."));
+    msgs.push("Oi, " + nome + "! Aqui é a Camila, da Bless Ótica. Faz um tempinho que você pegou seu óculos com a gente. Quer marcar uma revisão de grau sem compromisso? " + (c.atendimento === "Visita em casa" ? "Se ficar mais fácil, a gente vai até você em casa, como da última vez." : "Leva 15 minutinhos aqui na Voluntários da Pátria. Que dia agendo pra você?"));
     msgs.push("Oi, " + nome + ", tudo bem? Camila da Bless aqui. Seu " + c.lente + " já está com " + (e.mUlt || 0) + " meses de uso e a gente costuma recomendar uma conferida no grau nessa fase. Que dia fica bom pra você?");
   } else if (c.orcamento) {
     msgs.push("Oi, " + nome + "! Camila da Bless aqui. Ficou alguma dúvida no orçamento do " + c.orcamento.item + "? Consigo segurar esse valor até sexta e dá pra fazer em 12x sem juros.");
@@ -1466,37 +1518,53 @@ function renderTabBody(c, e, tl, osC, tarC, msg) {
     "</div>" +
     '<div class="d-note"><b>Mesmo motor de IA da Meal Time, outro contexto.</b> Em vez de kit e cardápio, ela lê tipo de lente, garantia, janela de troca e segundo par.</div>';
 }
-/* ============ otica movel ============ */
+/* ============ agendamento (telemarketing) ============ */
 function renderMovel() {
-  var visitas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.status !== "concluida"; })
+  var agenda = TAREFAS.filter(function (t) { return (t.tipo === "Agendamento" || t.tipo === "Ligação") && t.status !== "concluida"; })
     .sort(function (a, b) { return (a.data + a.hora) < (b.data + b.hora) ? -1 : 1; });
-  var vencRota = CLIENTES.filter(function (c) { var e = info(c); return c.atendimento === "Ótica Móvel" && e.janela.k === "vencida"; });
-  var potencial = vencRota.reduce(function (s, c) { return s + info(c).ultValor; }, 0) + 6 * 900;
-  var entregas = TAREFAS.filter(function (t) { return t.tipo === "Visita" && t.titulo.indexOf("Entrega") === 0 && t.status !== "concluida"; }).length;
+
+  /* Fila de ligações: vencidos e orçamentos abertos, do mais urgente pro menos */
+  var fila = CLIENTES.map(function (c) { c._e = info(c); return c; })
+    .filter(function (c) { return c._e.janela.k === "vencida" || c.orcamento; })
+    .sort(function (a, b) { return (b.orcamento ? 100 : b._e.janela.over) - (a.orcamento ? 100 : a._e.janela.over); });
+  var potencial = fila.reduce(function (sum, c) { return sum + (c.orcamento ? c.orcamento.valor : c._e.ultValor); }, 0);
 
   var kpis =
     '<div class="kpi-band">' +
-      '<div class="kpi-tile"><span class="k-label">Visitas agendadas</span><span class="k-val">' + visitas.length + '</span><span></span><span class="k-delta flat">quarta, 5 de agosto</span></div>' +
-      '<div class="kpi-tile"><span class="k-label">Vencidos na rota</span><span class="k-val">' + (vencRota.length + 6) + '</span><span></span><span class="k-delta flat">' + vencRota.length + " da base + 6 do Residencial Recanto</span></div>" +
-      '<div class="kpi-tile"><span class="k-label">Potencial da rota</span><span class="k-val">' + brl(potencial) + '</span><span></span><span class="k-delta up">pelo ticket de cada um</span></div>' +
-      '<div class="kpi-tile"><span class="k-label">Entregas na carona</span><span class="k-val">' + entregas + '</span><span></span><span class="k-delta flat">OS prontas no trajeto</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Fila de ligações de hoje</span><span class="k-val">' + fila.length + '</span><span></span><span class="k-delta flat">vencidos + orçamentos abertos</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Agendamentos da semana</span><span class="k-val">' + agenda.length + '</span><span></span><span class="k-delta flat">visitas marcadas na loja</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Comparecimento</span><span class="k-val">8 de 10</span><span></span><span class="k-delta up">lembrete automático na véspera</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Potencial da fila</span><span class="k-val">' + brl(potencial) + '</span><span></span><span class="k-delta up">pelo ticket de cada um</span></div>' +
     "</div>";
 
-  var lista = visitas.map(function (t) {
+  var listaFila = fila.slice(0, 6).map(function (c) {
+    var motivo = c.orcamento
+      ? "orçamento de " + brl(c.orcamento.valor) + " aberto há " + c._e.orcDias + "d"
+      : c._e.janela.label.toLowerCase() + " · última compra " + brl(c._e.ultValor);
+    return '<div class="route-item"><span class="avatar">' + iniciais(c.nome) + '</span>' +
+      '<div class="grow"><div class="t-title">' + esc(c.nome) + "</div>" +
+      '<div class="t-sub">' + esc(c.bairro) + " · " + motivo + "</div></div>" +
+      (c.orcamento ? '<span class="chip is-warn">Orçamento</span>' : '<span class="chip is-danger">' + c._e.janela.label + "</span>") +
+      '<button class="link-btn" data-zap="' + c.id + '" data-comtexto="1" type="button">Ligar / WhatsApp</button>' +
+      '<button class="link-btn" data-act="agendar-visita" data-id="' + c.id + '" type="button">Agendar visita</button>' +
+      '<button class="link-btn" data-ficha="' + c.id + '" type="button">Ficha</button></div>';
+  }).join("");
+
+  var listaAgenda = agenda.map(function (t) {
     var c = t.cid ? cli(t.cid) : null;
-    var e = c ? info(c) : null;
-    return '<div class="route-item"><span class="route-time">' + t.hora + '</span>' +
-      '<div class="grow"><div class="t-title">' + esc(t.titulo.replace("Visita Ótica Móvel: ", "")) + "</div>" +
-      '<div class="t-sub">' + (c ? esc(c.bairro) + " · " + esc(c.lente) + " · " + e.janela.label.toLowerCase() : "visita coletiva agendada") + "</div></div>" +
-      (c && e.janela.k === "vencida" ? '<span class="chip is-danger">ticket ' + brl(e.ultValor) + "</span>" : "") +
-      (c ? '<button class="link-btn" data-ficha="' + c.id + '" type="button">Abrir ficha</button>' : '<button class="link-btn" data-act="toast" data-msg="Lista coletiva do Residencial Recanto aberta." type="button">Abrir lista</button>') +
+    return '<div class="route-item"><span class="route-time">' + dtBR(t.data).slice(0, 5) + " " + t.hora + '</span>' +
+      '<div class="grow"><div class="t-title">' + esc(t.titulo) + "</div>" +
+      '<div class="t-sub">' + (c ? esc(c.bairro) + " · " + esc(c.lente) : "") + " · " + esc(t.resp) + "</div></div>" +
+      (c ? '<button class="link-btn" data-ficha="' + c.id + '" type="button">Abrir ficha</button>' : "") +
       '<button class="link-btn" data-act="task-toggle" data-id="' + t.id + '" type="button">Concluir</button></div>';
   }).join("");
 
   $("#movelContent").innerHTML = kpis +
-    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Quarta, 5 de agosto · Rafael</p><h3>Laranjal e Areal</h3></div><span class="chip is-brand">Rota montada pela base vencida</span></div>' +
-    (lista || '<p class="muted">Nenhuma visita agendada. Clique em Montar roteiro.</p>') +
-    '<div class="d-note"><b>Módulo exclusivo da Bless.</b> Não existe na Meal Time nem em nenhum dos 5 sistemas de ótica pesquisados. A rota nasce de quem está vencido em cada bairro, e as entregas prontas pegam carona no trajeto.</div></section>';
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Telemarketing</p><h3>Quem ligar agora</h3></div><span class="chip is-brand">Fila montada pela base, não por memória</span></div>' +
+    (listaFila || '<p class="muted">Fila vazia: ninguém vencido e nenhum orçamento parado.</p>') +
+    '<div class="d-note"><b>O item central da reunião.</b> Substitui as vendedoras externas: quem liga recebe a fila pronta (vencidos e orçamentos, do mais urgente pro menos), com contexto e script, e converte a ligação em visita agendada na loja. Preenche os vales de movimento que o dono descreveu.</div></section>' +
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Agenda</p><h3>Visitas marcadas</h3></div></div>' +
+    (listaAgenda || '<p class="muted">Nenhuma visita agendada ainda.</p>') + "</section>";
 }
 
 /* ============ laboratorio ============ */
@@ -1749,7 +1817,13 @@ document.addEventListener("click", function (ev) {
     var aniv = CLIENTES.filter(function (c) { return info(c).aniv; });
     toast("Mensagem de parabéns preparada para " + aniv.length + " clientes.");
   }
-  else if (act === "montar-roteiro") { toast("Roteiro remontado a partir da base vencida por bairro."); renderMovel(); }
+  else if (act === "montar-roteiro") { toast("Fila remontada: vencidos e orçamentos, do mais urgente pro menos."); renderMovel(); }
+  else if (act === "agendar-visita") {
+    var ca = cli(el.dataset.id);
+    TAREFAS.push({ id: "t" + (seq++), titulo: "Visita agendada na loja: " + ca.nome, cid: ca.id, tipo: "Agendamento", data: "2026-08-06", hora: "10:00", resp: "Camila", status: "aberta" });
+    toast("Visita de " + ca.nome.split(" ")[0] + " agendada para quinta, 10h. Lembrete automático na véspera.");
+    renderNav(); renderMovel();
+  }
   else if (act === "os-entregar") {
     OS.forEach(function (o) { if (o.n === Number(el.dataset.n)) { o.entregue = HOJE; toast("OS " + o.n + " marcada como entregue. Conferência de adaptação agendada para daqui a 7 dias."); TAREFAS.push({ id: "t" + (seq++), titulo: "Conferir adaptação (OS " + o.n + ")", cid: o.cid, tipo: "Pós-venda", data: "2026-08-11", hora: "10:00", resp: "Camila", status: "aberta" }); } });
     renderNav(); renderLab();
@@ -1836,6 +1910,42 @@ $("#diffBtn").addEventListener("click", function () {
 /* calendario nav */
 $("#calPrev").addEventListener("click", function () { state.cal.m--; if (state.cal.m < 0) { state.cal.m = 11; state.cal.y--; } renderCal(); });
 $("#calNext").addEventListener("click", function () { state.cal.m++; if (state.cal.m > 11) { state.cal.m = 0; state.cal.y++; } renderCal(); });
+
+/* ── portao de avaliacao: 7 dias a partir do primeiro acesso ── */
+(function () {
+  var CODIGO = "BLESS7";
+  var DIAS = 7;
+  var KEY = "bless_demo_trial";
+  var gate = $("#gate"), gateExp = $("#gateExpired"), chip = $("#trialChip");
+
+  if (window.location.search.indexOf("reset") > -1) { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  function registro() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; }
+  }
+  function diasRestantes(r) {
+    return DIAS - Math.floor((Date.now() - r.inicio) / 86400000);
+  }
+  function aplicar() {
+    var r = registro();
+    if (!r) { gate.hidden = false; gateExp.hidden = true; chip.hidden = true; return; }
+    var resta = diasRestantes(r);
+    if (resta <= 0) { gateExp.hidden = false; gate.hidden = true; chip.hidden = true; return; }
+    gate.hidden = true; gateExp.hidden = true;
+    chip.hidden = false;
+    chip.textContent = "Avaliação: " + (resta === 1 ? "último dia" : resta + " dias restantes");
+  }
+  $("#gateForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = ($("#gateCode").value || "").trim().toUpperCase();
+    if (v !== CODIGO) { $("#gateErr").hidden = false; return; }
+    try { localStorage.setItem(KEY, JSON.stringify({ inicio: Date.now() })); } catch (e) {}
+    $("#gateErr").hidden = true;
+    aplicar();
+    toast("Bem-vindo! Avaliação de 7 dias liberada.");
+  });
+  aplicar();
+})();
 
 /* boot */
 renderNav();
