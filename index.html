@@ -6,7 +6,7 @@
 <title>CRM Bless Ótica</title>
 
 <style>
-  /* Tokens: mesma base do CRM da Meal Time. Só o bloco --brand muda por cliente. */
+  /* Tokens do design system. Só o bloco --brand muda por cliente (white-label). */
   :root {
     --bg: #f5f6f8;
     --bg-deep: #ffffff;
@@ -29,9 +29,9 @@
     --danger: #dc2626; --danger-soft: rgba(220,38,38,.10); --danger-ink: #b3261e;
     --info-soft: rgba(37,99,235,.10); --info-ink: #1d4ed8;
 
-    --shadow-sm: 0 1px 2px rgba(17,19,28,.05);
-    --shadow: 0 1px 3px rgba(17,19,28,.04), 0 10px 28px rgba(17,19,28,.07);
-    --r-xl: 16px; --r-lg: 13px; --r-md: 10px; --r-sm: 8px; --r-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(17,19,28,.04);
+    --shadow: 0 2px 6px rgba(17,19,28,.05), 0 14px 34px rgba(17,19,28,.08);
+    --r-xl: 18px; --r-lg: 14px; --r-md: 11px; --r-sm: 9px; --r-pill: 999px;
 
     --sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -73,8 +73,8 @@
     --warn-soft: rgba(180,83,9,.10); --warn-ink: #92400e;
     --danger-soft: rgba(220,38,38,.10); --danger-ink: #b3261e;
     --info-soft: rgba(37,99,235,.10); --info-ink: #1d4ed8;
-    --shadow-sm: 0 1px 2px rgba(17,19,28,.05);
-    --shadow: 0 1px 3px rgba(17,19,28,.04), 0 10px 28px rgba(17,19,28,.07);
+    --shadow-sm: 0 1px 2px rgba(17,19,28,.04);
+    --shadow: 0 2px 6px rgba(17,19,28,.05), 0 14px 34px rgba(17,19,28,.08);
   }
 
   * { box-sizing: border-box; }
@@ -172,7 +172,7 @@
     border: 1px solid var(--line-strong); background: var(--surface); color: var(--text);
     display: inline-flex; align-items: center; gap: .35rem;
   }
-  .btn { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+  .btn { background: var(--brand); border-color: var(--brand); color: var(--on-brand); box-shadow: 0 1px 2px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.12); }
   .btn:hover { background: var(--brand-deep); }
   .btn-ghost:hover { background: var(--surface-tint); }
   .btn-danger { color: var(--danger-ink); }
@@ -195,7 +195,8 @@
 
   /* ---------- kpis ---------- */
   .kpi-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr)); gap: .85rem; margin-bottom: .95rem; }
-  .kpi-tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); padding: .95rem 1.05rem; display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; align-items: end; }
+  .kpi-tile { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); padding: 1rem 1.05rem .95rem; display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; align-items: end; }
+  .kpi-tile::before { content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 2.5px; background: linear-gradient(90deg, var(--brand), transparent 65%); opacity: .85; }
   .kpi-tile .k-label { grid-column: 1 / -1; font-size: .76rem; color: var(--muted); font-weight: 600; }
   .kpi-tile .k-val { font-family: var(--display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
   .kpi-tile .k-delta { grid-column: 1 / -1; font-size: .72rem; font-family: var(--mono); }
@@ -218,7 +219,7 @@
   .quick-card strong { font-size: .87rem; }
   .quick-card small { font-size: .74rem; color: var(--muted-soft); }
 
-  .focus-strip { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; background: var(--brand-soft); border-radius: var(--r-lg); padding: .8rem 1rem; margin-bottom: .95rem; }
+  .focus-strip { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; background: linear-gradient(120deg, var(--brand-soft), transparent 75%); border: 1px solid var(--brand-soft); border-radius: var(--r-lg); padding: .8rem 1rem; margin-bottom: .95rem; }
   .focus-strip strong { font-size: .9rem; }
   .focus-strip p { font-size: .82rem; color: var(--muted); }
 
@@ -265,6 +266,7 @@
   .tbl tbody td { padding: .58rem .65rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
   .tbl tbody tr:last-child td { border-bottom: none; }
   .tbl tbody tr:hover { background: var(--surface-tint); }
+  .tbl tbody tr[data-frow] { cursor: pointer; }
   .tbl .td-r { text-align: right; }
   .tbl thead .td-r { text-align: right; }
   .th-sort { background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer; display: inline-flex; gap: .25rem; align-items: center; text-transform: inherit; letter-spacing: inherit; }
@@ -366,6 +368,29 @@
   .minibar { height: 7px; border-radius: 999px; background: var(--surface-tint); overflow: hidden; min-width: 60px; }
   .minibar > i { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
 
+  /* ---------- whatsapp ---------- */
+  .wpp-layout { display: grid; grid-template-columns: 17rem 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); min-height: 30rem; }
+  .wpp-list { border-right: 1px solid var(--line); background: var(--bg-deep); overflow-y: auto; max-height: 36rem; }
+  .wpp-item { display: flex; gap: .6rem; align-items: flex-start; width: 100%; text-align: left; background: none; border: none; border-bottom: 1px solid var(--line); padding: .7rem .8rem; cursor: pointer; }
+  .wpp-item:hover { background: var(--surface-tint); }
+  .wpp-item.is-active { background: var(--brand-soft); box-shadow: inset 2.5px 0 0 var(--brand); }
+  .wpp-item .grow { flex: 1; min-width: 0; }
+  .wpp-item .w-nome { font-size: .84rem; font-weight: 700; display: flex; justify-content: space-between; gap: .4rem; color: var(--text); }
+  .wpp-item .w-hora { font-family: var(--mono); font-size: .68rem; color: var(--muted-soft); font-weight: 400; }
+  .wpp-item .w-prev { font-size: .76rem; color: var(--muted-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 12.5rem; }
+  .wpp-unread { min-width: 17px; height: 17px; border-radius: var(--r-pill); background: var(--brand); color: var(--on-brand); font-size: .66rem; font-family: var(--mono); display: grid; place-items: center; padding: 0 4px; }
+  .wpp-chat { display: flex; flex-direction: column; min-width: 0; }
+  .wpp-chat-head { display: flex; align-items: center; gap: .6rem; padding: .7rem .95rem; border-bottom: 1px solid var(--line); }
+  .wpp-msgs { flex: 1; overflow-y: auto; padding: 1rem .95rem; display: flex; flex-direction: column; gap: .45rem; background: var(--bg); max-height: 24rem; }
+  .bubble { max-width: 78%; padding: .5rem .75rem; border-radius: 14px; font-size: .84rem; line-height: 1.45; }
+  .bubble.in { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+  .bubble.out { align-self: flex-end; background: var(--brand-soft); border: 1px solid transparent; border-bottom-right-radius: 5px; }
+  .bubble .b-meta { display: block; font-family: var(--mono); font-size: .64rem; color: var(--muted-soft); margin-top: .25rem; }
+  .wpp-ia { margin: .6rem .95rem 0; padding: .6rem .8rem; background: var(--brand-soft); border-radius: var(--r-md); font-size: .78rem; display: flex; flex-wrap: wrap; gap: .4rem .8rem; align-items: center; }
+  .wpp-send { display: flex; gap: .5rem; padding: .7rem .95rem; border-top: 1px solid var(--line); margin-top: .6rem; }
+  .wpp-send input { flex: 1; background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-pill); padding: .5rem .85rem; color: var(--text); font: inherit; font-size: .85rem; }
+  @media (max-width: 860px) { .wpp-layout { grid-template-columns: 1fr; } .wpp-list { max-height: 13rem; border-right: none; border-bottom: 1px solid var(--line); } }
+
   /* ---------- dialogs / palette / toasts ---------- */
   dialog { border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--surface); color: var(--text); padding: 0; max-width: 30rem; width: calc(100vw - 2rem); box-shadow: var(--shadow); }
   dialog::backdrop { background: rgba(8, 10, 12, .5); }
@@ -393,10 +418,6 @@
   .toast.ok { border-left: 3px solid var(--ok); }
   .toast.warn { border-left: 3px solid var(--warn); }
   @keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-  /* ---------- diff notes ---------- */
-  .d-note { display: none; }
-  body.show-diff .d-note { display: block; margin: .7rem 0 0; font-size: .78rem; line-height: 1.5; color: var(--warn-ink); background: var(--warn-soft); border-radius: var(--r-md); padding: .5rem .7rem; }
 
   /* ---------- portao de avaliacao (7 dias) ---------- */
   .gate {
@@ -442,7 +463,7 @@
 
 <div class="demobar">
   <span class="tag">Avaliação</span>
-  <span>Dados fictícios · integração de leitura com o ssOtica no plano real</span>
+  <span>Ambiente de avaliação com dados fictícios</span>
   <span class="chip is-brand" id="trialChip" hidden style="background:rgba(255,255,255,.12);color:#dfe3ea;"></span>
   <span class="spacer"></span>
   <span class="swatches" title="Cor da marca">
@@ -451,7 +472,6 @@
     <button class="swatch" data-brand="#7c2d92" style="background:#7c2d92" aria-pressed="false" aria-label="Roxo"></button>
     <button class="swatch" data-brand="#b45309" style="background:#b45309" aria-pressed="false" aria-label="Âmbar"></button>
   </span>
-  <button class="db-btn" id="diffBtn" type="button" aria-pressed="false">Mostrar o que mudou</button>
 </div>
 
 <div class="shell">
@@ -505,8 +525,22 @@
         <div class="quick-row" id="quickRow"></div>
         <div class="kpi-band" id="kpiBand"></div>
         <div class="focus-strip" id="focusStrip"></div>
+        <section class="panel" id="briefPanel">
+          <div class="panel-head" style="margin-bottom:.6rem;">
+            <div>
+              <p class="eyebrow">Brief do dia · gerado às 6h <span class="chip is-brand" style="margin-left:.3rem;">Plano Inteligente</span></p>
+              <h3>O que a IA viu nas conversas de ontem</h3>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.86rem;">
+            <div>1. <b>Nelson Vieira esquentou:</b> perguntou parcelamento e cor da armação no orçamento de R$ 1.890. É fechamento, responder antes das 10h.</div>
+            <div>2. <b>Rogério Bastos cobrou a OS atrasada.</b> Responder antes de qualquer outra coisa e oferecer cortesia: risco de reclamação pública.</div>
+            <div>3. <b>Ivone Cardoso travou no financeiro.</b> Não dar desconto: oferecer 12x começando mês que vem. Perfil dela fecha com condição, não com preço.</div>
+            <div class="muted" style="font-size:.76rem;">Tempo médio de resposta ontem: Camila 11 min · Rafael 58 min · Juliana 2h04. Conversa sem resposta há mais de 24h: 1.</div>
+          </div>
+        </section>
         <div class="summary-grid" id="summaryGrid"></div>
-        <div class="d-note"><b>Os quadros mudam 100%.</b> Na Meal Time são pedidos da semana, kits e cashback. Aqui: janela de troca, orçamento parado, laboratório, garantia e segundo par. A estrutura do card (título, selo, atalhos, lista clicável) é a mesma do CRM em produção.</div>
+        
         <section class="panel" style="margin-top:.95rem;">
           <div class="panel-head">
             <div>
@@ -616,7 +650,7 @@
               <button class="btn-ghost" data-act="limpar-filtros" type="button">Limpar filtros</button>
               <button class="btn" data-act="aplicar-filtros" type="button">Aplicar</button>
             </div>
-            <div class="d-note"><b>Mesmo painel de filtros do CRM da Meal Time</b> (chips de situação, faixas, ordenação). Os recortes é que viram de ótica: janela de troca, marca da lente, garantia e segundo par no lugar de kit, cashback e unidade.</div>
+            
           </div>
           <div class="toolbar">
             <label class="search-box">
@@ -653,6 +687,22 @@
         <div id="movelContent"></div>
       </section>
 
+      <section class="view" data-view="wpp">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Conversas <span class="chip is-brand" style="margin-left:.3rem;">Plano Inteligente</span></p>
+            <h2>WhatsApp</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="toast" data-msg="Biblioteca de modelos aberta (revisão, orçamento, aniversário, atraso de OS)." type="button">Modelos</button>
+          </div>
+        </div>
+        <div class="wpp-layout">
+          <div class="wpp-list" id="wppList"></div>
+          <div class="wpp-chat" id="wppChat"></div>
+        </div>
+      </section>
+
       <section class="view" data-view="laboratorio">
         <div class="view-head">
           <div>
@@ -665,7 +715,7 @@
         </div>
         <section class="panel">
           <div class="twrap" id="osTableWrap"></div>
-          <div class="d-note"><b>Tela nova, motor antigo.</b> É a mecânica de tarefas com prazo do CRM da Meal Time aplicada à ordem de serviço. OS além da data prometida dispara aviso ao cliente antes de ele ligar reclamando.</div>
+          
         </section>
       </section>
 
@@ -681,7 +731,7 @@
         </div>
         <section class="panel">
           <div id="regrasList"></div>
-          <div class="d-note"><b>Mesma engrenagem, outra escala.</b> Na Meal Time a régua é de dias, porque comida recompra rápido. Aqui vira 12, 18 e 24 meses conforme o tipo de lente. É configuração, não código novo.</div>
+          
         </section>
       </section>
 
@@ -704,7 +754,7 @@
             </div>
           </div>
           <div id="repBars" style="display:flex;flex-direction:column;gap:.75rem;"></div>
-          <div class="d-note"><b>Este gráfico é a venda.</b> Hoje a Bless não consegue desenhar esta barra, porque ninguém sabe quanto da base está com a janela vencida. É o primeiro relatório útil que o sistema entrega.</div>
+          
         </section>
         <section class="panel">
           <div class="panel-head">
@@ -915,6 +965,31 @@ var TAREFAS = [
   { id:"t13", titulo:"Primeira retomada: orçamento da Eloá", cid:"c14", tipo:"Orçamento", data:"2026-08-07", hora:"09:30", resp:"Juliana", status:"aberta" }
 ];
 
+var CONVERSAS = [
+  { cid:"c5",  naoLidas:2, msgs:[
+    { de:"in",  txt:"Boa tarde! Recebi o orçamento do multifocal, ficou em 1.890 né? Vou conversar com a esposa e te retorno.", h:"seg 16:42" },
+    { de:"out", txt:"Perfeito, Nelson! Qualquer dúvida sobre as lentes é só chamar. Consigo segurar esse valor até sexta.", h:"seg 16:50" },
+    { de:"in",  txt:"Ela perguntou se dá pra fazer em 12x sem juros?", h:"hoje 09:12" },
+    { de:"in",  txt:"E se tiver na cor grafite a armação", h:"hoje 09:13" } ] },
+  { cid:"c8",  naoLidas:1, msgs:[
+    { de:"out", txt:"Oi, dona Ivone! Sobre o orçamento do Varilux XR com Transitions: posso agendar a medição essa semana?", h:"qui 11:20" },
+    { de:"in",  txt:"Querida, ainda tô pensando. Esse mês tá apertado.", h:"hoje 08:31" } ] },
+  { cid:"c7",  naoLidas:0, msgs:[
+    { de:"out", txt:"Cláudia, teu solar ficou pronto e já está aqui na loja! Pode retirar até as 18h.", h:"sex 10:02" },
+    { de:"in",  txt:"Ótimo!! Passo aí amanhã cedo. Obrigada!", h:"sex 10:15" },
+    { de:"out", txt:"Combinado, te espero. 😊", h:"sex 10:16" } ] },
+  { cid:"c6",  naoLidas:1, msgs:[
+    { de:"in",  txt:"Bom dia, meu óculos ficou pronto? Era pra ter chegado dia 1º.", h:"hoje 08:05" } ] },
+  { cid:"c1",  naoLidas:0, msgs:[
+    { de:"out", txt:"Dona Marlene, aqui é a Camila da Bless. Faz um tempinho que a senhora pegou seu Varilux com a gente. Quer marcar uma revisão de grau sem compromisso?", h:"ontem 15:30" } ] }
+];
+function iaConversa(cv) {
+  var c = cli(cv.cid);
+  if (cv.cid === "c5") return { resumo: "Decisão em família, sinal de compra: perguntou parcelamento e cor da armação. Objeção é forma de pagamento, não preço.", resposta: "Oi, Nelson! Faz sim: 12x sem juros no cartão. E a armação tem na grafite, separei uma aqui pra vocês verem. Que dia fica bom pra passarem?" };
+  if (cv.cid === "c8") return { resumo: "Objeção financeira explícita (mês apertado). Cliente VIP de ticket alto: não oferecer desconto, oferecer condição.", resposta: "Entendo perfeitamente, dona Ivone! E se a gente parcelar em 12x, começando só no mês que vem? Aí a senhora não mexe no orçamento deste mês." };
+  if (cv.cid === "c6") return { resumo: "Cliente cobrando OS atrasada (3 dias). Responder ANTES de tudo hoje: risco de reclamação pública.", resposta: "Bom dia, Rogério! Tua lente atrasou no laboratório e já estamos cobrando eles. Assim que chegar te aviso na hora. Pelo transtorno, o ajuste e a limpeza ficam por nossa conta. Desculpa a demora!" };
+  return { resumo: "Conversa em dia. " + (c ? c.nome.split(" ")[0] : "Cliente") + " sem pendência de resposta.", resposta: "Oi! Qualquer coisa que precisar, é só chamar. 😊" };
+}
 var REGRAS = [
   { id:"r1", quando:"7 dias após a entrega",   acao:"Conferência de adaptação da multifocal", ativa:true },
   { id:"r2", quando:"48h após o orçamento",    acao:"Retomada de orçamento não fechado", ativa:true },
@@ -990,7 +1065,7 @@ function taskLate(t) { return t.status !== "concluida" && t.data < HOJE; }
 
 /* ============ estado ============ */
 var state = {
-  view: "resumo", fichaId: "c1", tab: "overview", diff: false,
+  view: "resumo", fichaId: "c1", tab: "overview", wppSel: "c5",
   taskTab: "hoje", taskDia: null, cal: { y: 2026, m: 7 },
   msgIdx: 0,
   cli: { situ: "all", tipos: [], marca: "all", tMin: "", tMax: "", mMin: "", mMax: "", ord: "urgencia", busca: "", store: "all", page: 1, sel: {} }
@@ -1011,9 +1086,9 @@ var VIEWS = [
   { k: "resumo",      titulo: "Resumo",          icon: '<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>' },
   { k: "tarefas",     titulo: "Tarefas",         icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>' },
   { k: "clientes",    titulo: "Clientes",        icon: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>' },
-  { k: "ficha",       titulo: "Ficha do cliente",icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>' },
   { k: "movel",       titulo: "Agendamento",     icon: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>' },
   { k: "laboratorio", titulo: "Laboratório",     icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>' },
+  { k: "wpp",         titulo: "WhatsApp",        icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>' },
   { k: "automacoes",  titulo: "Automações",      icon: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>' },
   { k: "relatorios",  titulo: "Relatórios",      icon: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>' }
 ];
@@ -1022,7 +1097,8 @@ function badgeCounts() {
   var tHoje = TAREFAS.filter(function (t) { return t.status === "aberta" && (t.data === HOJE || taskLate(t)); }).length;
   var visitas = TAREFAS.filter(function (t) { return (t.tipo === "Agendamento" || t.tipo === "Ligação") && t.status !== "concluida"; }).length;
   var osAtr = OS.filter(function (o) { return !o.entregue && dias(o.prometida, HOJE) > 0; }).length;
-  return { tarefas: tHoje, movel: visitas, laboratorio: osAtr };
+  var naoLidas = CONVERSAS.reduce(function (sum, cv) { return sum + cv.naoLidas; }, 0);
+  return { tarefas: tHoje, movel: visitas, laboratorio: osAtr, wpp: naoLidas };
 }
 
 function renderNav() {
@@ -1032,7 +1108,9 @@ function renderNav() {
     if (v.k === "tarefas" && b.tarefas) badge = '<span class="nav-count">' + b.tarefas + "</span>";
     if (v.k === "movel" && b.movel) badge = '<span class="nav-count is-brandish">' + b.movel + "</span>";
     if (v.k === "laboratorio" && b.laboratorio) badge = '<span class="nav-count">' + b.laboratorio + "</span>";
-    return '<button class="nav-link' + (state.view === v.k ? " is-active" : "") + '" data-go="' + v.k + '" type="button">' +
+    if (v.k === "wpp" && b.wpp) badge = '<span class="nav-count">' + b.wpp + "</span>";
+    var ativa = state.view === v.k || (state.view === "ficha" && v.k === "clientes");
+    return '<button class="nav-link' + (ativa ? " is-active" : "") + '" data-go="' + v.k + '" type="button">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + v.icon + "</svg>" + v.titulo + badge + "</button>";
   }).join("");
 }
@@ -1041,7 +1119,7 @@ function go(view) {
   state.view = view;
   $$(".view").forEach(function (v) { v.classList.toggle("is-active", v.dataset.view === view); });
   var meta = VIEWS.filter(function (v) { return v.k === view; })[0];
-  $("#appbarTitle").textContent = meta ? meta.titulo : "";
+  $("#appbarTitle").textContent = view === "ficha" ? "Clientes · Ficha" : (meta ? meta.titulo : "");
   renderNav();
   renderView(view);
   window.scrollTo({ top: 0 });
@@ -1053,6 +1131,7 @@ function renderView(view) {
   else if (view === "clientes") renderClientes();
   else if (view === "ficha") renderFicha();
   else if (view === "movel") renderMovel();
+  else if (view === "wpp") renderWpp();
   else if (view === "laboratorio") renderLab();
   else if (view === "automacoes") renderRegras();
   else if (view === "relatorios") renderRelatorios();
@@ -1331,7 +1410,7 @@ function renderClientes() {
   var rows = pag.map(function (c) {
     var e = c._e;
     var sel = f.sel[c.id] ? " checked" : "";
-    return "<tr>" +
+    return '<tr data-frow="' + c.id + '">' +
       '<td><input type="checkbox" data-act="sel" data-id="' + c.id + '"' + sel + ' aria-label="Selecionar ' + esc(c.nome) + '"></td>' +
       '<td><button class="link-btn cel-nome" data-ficha="' + c.id + '" type="button">' + esc(c.nome) + '</button><div class="cel-sub">' + esc(c.bairro) + (c.atendimento === "Visita em casa" ? " · 🏠" : "") + "</div></td>" +
       '<td class="num">' + fmtFone(c.fone) + "</td>" +
@@ -1465,7 +1544,7 @@ function renderFicha() {
         '<div class="fs-item"><span class="fs-label">Segundo par</span><strong>' + (c.segundoPar ? "Tem" : "Não tem") + "</strong>" + (!c.segundoPar && c.compras.length ? "<small>oportunidade de solar com grau</small>" : "") + "</div>" +
         '<div class="fs-item"><span class="fs-label">Atendimento</span><strong>' + esc(c.atendimento) + "</strong><small>resp.: " + esc(c.resp) + "</small></div>" +
       "</div>" +
-      '<div class="d-note"><b>Mesma coluna do CRM da Meal Time, outras contas.</b> Lá: vendas em 6 meses e cashback. Aqui: janela de troca, garantia e segundo par, os três gatilhos de venda de uma ótica.</div></aside>' +
+      '</aside>' +
       "<div>" +
         '<div class="tabs">' + abas.map(function (a) { return '<button class="tab' + (state.tab === a[0] ? " is-active" : "") + '" data-act="tab" data-t="' + a[0] + '" type="button">' + a[1] + "</button>"; }).join("") + "</div>" +
         '<div id="tabBody">' + renderTabBody(c, e, tl, osDoCliente, tarefasDoCliente, msg) + "</div>" +
@@ -1482,7 +1561,7 @@ function renderTabBody(c, e, tl, osC, tarC, msg) {
       ["Cliente desde", c.compras.length ? mesAno(c.compras[0].data) : "—"]
     ];
     return '<div class="info-grid">' + campos.map(function (f) { return '<div class="info-item"><label>' + f[0] + "</label><span>" + esc(f[1]) + "</span></div>"; }).join("") + "</div>" +
-      '<div class="d-note"><b>Campos de ótica entram, campo clínico não.</b> Não existe campo de grau (esférico, cilíndrico, eixo): receita é dado sensível pela LGPD e fica fora desta fase por decisão de projeto.</div>';
+      '';
   }
   if (state.tab === "compras") {
     return '<div class="twrap"><table class="tbl"><thead><tr><th>Data</th><th>Produto</th><th>Lente</th><th class="td-r">Valor</th><th>Atendente</th></tr></thead><tbody>' +
@@ -1493,7 +1572,7 @@ function renderTabBody(c, e, tl, osC, tarC, msg) {
     return '<div class="twrap"><table class="tbl"><thead><tr><th>OS</th><th>Aberta</th><th>Lente</th><th>Laboratório</th><th>Prometida</th><th>Situação</th></tr></thead><tbody>' +
       (osC.map(function (o) { var s = osStatus(o); return "<tr><td class='num'>" + o.n + "</td><td class='num'>" + dtBR(o.aberta) + "</td><td>" + esc(o.lente) + "</td><td>" + esc(o.lab) + "</td><td class='num'>" + dtBR(o.prometida) + "</td><td><span class='chip " + s.cls + "'>" + s.label + "</span></td></tr>"; }).join("") ||
       '<tr><td colspan="6" class="muted" style="padding:1rem;">Nenhuma ordem de serviço.</td></tr>') + "</tbody></table></div>" +
-      '<div class="d-note"><b>Aba nova.</b> A OS é o eixo operacional da ótica e não tem equivalente na Meal Time: liga prazo do laboratório a atraso e reclamação, com número.</div>';
+      '';
   }
   if (state.tab === "tarefas") {
     return tarC.length ? tarC.map(function (t) {
@@ -1516,7 +1595,7 @@ function renderTabBody(c, e, tl, osC, tarC, msg) {
       '<button class="btn" data-zap="' + c.id + '" data-comtexto="1" type="button">Enviar no WhatsApp</button>' +
       '<button class="btn-ghost" data-act="outra-msg" type="button">Gerar outra versão</button>' +
     "</div>" +
-    '<div class="d-note"><b>Mesmo motor de IA da Meal Time, outro contexto.</b> Em vez de kit e cardápio, ela lê tipo de lente, garantia, janela de troca e segundo par.</div>';
+    '';
 }
 /* ============ agendamento (telemarketing) ============ */
 function renderMovel() {
@@ -1562,9 +1641,47 @@ function renderMovel() {
   $("#movelContent").innerHTML = kpis +
     '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Telemarketing</p><h3>Quem ligar agora</h3></div><span class="chip is-brand">Fila montada pela base, não por memória</span></div>' +
     (listaFila || '<p class="muted">Fila vazia: ninguém vencido e nenhum orçamento parado.</p>') +
-    '<div class="d-note"><b>O item central da reunião.</b> Substitui as vendedoras externas: quem liga recebe a fila pronta (vencidos e orçamentos, do mais urgente pro menos), com contexto e script, e converte a ligação em visita agendada na loja. Preenche os vales de movimento que o dono descreveu.</div></section>' +
+    '</section>' +
     '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Agenda</p><h3>Visitas marcadas</h3></div></div>' +
     (listaAgenda || '<p class="muted">Nenhuma visita agendada ainda.</p>') + "</section>";
+}
+
+/* ============ whatsapp ============ */
+function renderWpp() {
+  $("#wppList").innerHTML = CONVERSAS.map(function (cv) {
+    var c = cli(cv.cid);
+    var ult = cv.msgs[cv.msgs.length - 1];
+    return '<button class="wpp-item' + (state.wppSel === cv.cid ? " is-active" : "") + '" data-act="wpp-abrir" data-id="' + cv.cid + '" type="button">' +
+      '<span class="avatar">' + iniciais(c.nome) + '</span>' +
+      '<span class="grow"><span class="w-nome">' + esc(c.nome) + '<span class="w-hora">' + esc(ult.h) + "</span></span>" +
+      '<span class="w-prev">' + esc(ult.txt) + "</span></span>" +
+      (cv.naoLidas ? '<span class="wpp-unread">' + cv.naoLidas + "</span>" : "") + "</button>";
+  }).join("");
+
+  var cv = CONVERSAS.filter(function (x) { return x.cid === state.wppSel; })[0] || CONVERSAS[0];
+  var c = cli(cv.cid);
+  var e = info(c);
+  var ia = iaConversa(cv);
+  $("#wppChat").innerHTML =
+    '<div class="wpp-chat-head"><span class="avatar">' + iniciais(c.nome) + '</span>' +
+    '<div style="flex:1;min-width:0;"><b style="font-size:.87rem;">' + esc(c.nome) + '</b><div class="cel-sub">' + esc(c.lente) + " · " + e.janela.label.toLowerCase() + "</div></div>" +
+    '<button class="link-btn" data-ficha="' + c.id + '" type="button">Abrir ficha</button></div>' +
+    '<div class="wpp-msgs" id="wppMsgs">' + cv.msgs.map(function (m) {
+      return '<div class="bubble ' + m.de + '">' + esc(m.txt) + '<span class="b-meta">' + esc(m.h) + (m.de === "out" ? " · ✓✓" : "") + "</span></div>";
+    }).join("") + "</div>" +
+    '<div class="wpp-ia"><span class="chip is-brand">IA</span><span style="flex:1;min-width:12rem;">' + esc(ia.resumo) + '</span>' +
+    '<button class="link-btn" data-act="wpp-sugerir" type="button">Usar resposta sugerida</button></div>' +
+    '<form class="wpp-send" id="wppSendForm"><input id="wppInput" placeholder="Escreva a mensagem..." autocomplete="off">' +
+    '<button class="btn" type="submit">Enviar</button></form>';
+  var mts = $("#wppMsgs"); if (mts) mts.scrollTop = mts.scrollHeight;
+  $("#wppSendForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = $("#wppInput").value.trim();
+    if (!v) return;
+    cv.msgs.push({ de: "out", txt: v, h: "hoje agora" });
+    cv.naoLidas = 0;
+    renderNav(); renderWpp();
+  });
 }
 
 /* ============ laboratorio ============ */
@@ -1698,7 +1815,13 @@ function fecharDialogs() { $$("dialog[open]").forEach(function (d) { d.close(); 
 
 document.addEventListener("click", function (ev) {
   var el = ev.target.closest("[data-go],[data-ficha],[data-act],[data-zap],[data-close],[data-brand]");
-  if (!el) return;
+  if (!el) {
+    var row = ev.target.closest("tr[data-frow]");
+    if (row && !ev.target.closest("button,input,a,label")) {
+      state.fichaId = row.dataset.frow; state.tab = "overview"; state.msgIdx = 0; go("ficha");
+    }
+    return;
+  }
 
   if (el.dataset.close) { var dc = $("#" + el.dataset.close); if (dc) dc.close(); return; }
   if (el.dataset.brand) {
@@ -1829,6 +1952,16 @@ document.addEventListener("click", function (ev) {
     renderNav(); renderLab();
   }
   else if (act === "pal-task") { fecharDialogs(); go("tarefas"); }
+  else if (act === "wpp-abrir") {
+    state.wppSel = el.dataset.id;
+    CONVERSAS.forEach(function (cv) { if (cv.cid === state.wppSel) cv.naoLidas = 0; });
+    renderNav(); renderWpp();
+  }
+  else if (act === "wpp-sugerir") {
+    var cvS = CONVERSAS.filter(function (x) { return x.cid === state.wppSel; })[0];
+    $("#wppInput").value = iaConversa(cvS).resposta;
+    $("#wppInput").focus();
+  }
 });
 
 /* formularios */
@@ -1874,6 +2007,13 @@ $("#regraForm").addEventListener("submit", function () {
 /* palette */
 $("#paletteTrigger").addEventListener("click", function () { $("#paletteDlg").showModal(); $("#palInput").value = ""; palRender(""); $("#palInput").focus(); });
 $("#palInput").addEventListener("input", function () { palRender(this.value); });
+$("#palInput").addEventListener("keydown", function (ev) {
+  if (ev.key === "Enter") {
+    ev.preventDefault();
+    var primeiro = document.querySelector("#palResults .pal-item");
+    if (primeiro) primeiro.click();
+  }
+});
 document.addEventListener("keydown", function (ev) {
   if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") { ev.preventDefault(); $("#paletteDlg").showModal(); $("#palInput").value = ""; palRender(""); $("#palInput").focus(); }
 });
@@ -1899,13 +2039,6 @@ $("#themeToggle").addEventListener("click", function () {
   try { sessionStorage.setItem("tema", novo); } catch (e) {}
 });
 try { var temaSalvo = sessionStorage.getItem("tema"); if (temaSalvo) document.documentElement.setAttribute("data-theme", temaSalvo); } catch (e) {}
-
-/* diff */
-$("#diffBtn").addEventListener("click", function () {
-  var on = document.body.classList.toggle("show-diff");
-  this.setAttribute("aria-pressed", String(on));
-  this.textContent = on ? "Esconder anotações" : "Mostrar o que mudou";
-});
 
 /* calendario nav */
 $("#calPrev").addEventListener("click", function () { state.cal.m--; if (state.cal.m < 0) { state.cal.m = 11; state.cal.y--; } renderCal(); });
@@ -1951,7 +2084,5 @@ $("#calNext").addEventListener("click", function () { state.cal.m++; if (state.c
 renderNav();
 renderResumo();
 </script>
-
-
 
 </html>
