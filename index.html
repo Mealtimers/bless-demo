@@ -368,6 +368,22 @@
   .minibar { height: 7px; border-radius: 999px; background: var(--surface-tint); overflow: hidden; min-width: 60px; }
   .minibar > i { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
 
+  /* ---------- configuracoes ---------- */
+  .cfg-layout { display: grid; grid-template-columns: 13rem 1fr; gap: 1rem; align-items: start; }
+  .cfg-menu { display: flex; flex-direction: column; gap: .15rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: .5rem; box-shadow: var(--shadow-sm); position: sticky; top: 4.2rem; }
+  .cfg-item { display: flex; align-items: center; gap: .5rem; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: .45rem .6rem; border-radius: var(--r-sm); color: var(--muted); font-size: .84rem; font-weight: 600; }
+  .cfg-item:hover { background: var(--surface-tint); color: var(--text); }
+  .cfg-item.is-active { background: var(--brand-soft); color: var(--brand-ink); }
+  .swatch-row { display: flex; gap: .45rem; flex-wrap: wrap; }
+  .swatch-big { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+  .swatch-big[aria-pressed="true"] { border-color: var(--text); }
+  .perm-table td:first-child { font-weight: 600; }
+  .perm-check { width: 17px; height: 17px; accent-color: var(--brand); cursor: pointer; }
+  .role-pill { font-size: .7rem; font-weight: 700; padding: .12rem .5rem; border-radius: var(--r-pill); }
+  .role-admin { background: var(--danger-soft); color: var(--danger-ink); }
+  .role-supervisor { background: var(--info-soft); color: var(--info-ink); }
+  .role-vendedor { background: var(--surface-tint); color: var(--muted); }
+
   /* ---------- whatsapp ---------- */
   .wpp-layout { display: grid; grid-template-columns: 17rem 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); min-height: 30rem; }
   .wpp-list { border-right: 1px solid var(--line); background: var(--bg-deep); overflow-y: auto; max-height: 36rem; }
@@ -525,20 +541,6 @@
         <div class="quick-row" id="quickRow"></div>
         <div class="kpi-band" id="kpiBand"></div>
         <div class="focus-strip" id="focusStrip"></div>
-        <section class="panel" id="briefPanel">
-          <div class="panel-head" style="margin-bottom:.6rem;">
-            <div>
-              <p class="eyebrow">Brief do dia · gerado às 6h <span class="chip is-brand" style="margin-left:.3rem;">Plano Inteligente</span></p>
-              <h3>O que a IA viu nas conversas de ontem</h3>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.86rem;">
-            <div>1. <b>Nelson Vieira esquentou:</b> perguntou parcelamento e cor da armação no orçamento de R$ 1.890. É fechamento, responder antes das 10h.</div>
-            <div>2. <b>Rogério Bastos cobrou a OS atrasada.</b> Responder antes de qualquer outra coisa e oferecer cortesia: risco de reclamação pública.</div>
-            <div>3. <b>Ivone Cardoso travou no financeiro.</b> Não dar desconto: oferecer 12x começando mês que vem. Perfil dela fecha com condição, não com preço.</div>
-            <div class="muted" style="font-size:.76rem;">Tempo médio de resposta ontem: Camila 11 min · Rafael 58 min · Juliana 2h04. Conversa sem resposta há mais de 24h: 1.</div>
-          </div>
-        </section>
         <div class="summary-grid" id="summaryGrid"></div>
         
         <section class="panel" style="margin-top:.95rem;">
@@ -690,7 +692,7 @@
       <section class="view" data-view="wpp">
         <div class="view-head">
           <div>
-            <p class="eyebrow">Conversas <span class="chip is-brand" style="margin-left:.3rem;">Plano Inteligente</span></p>
+            <p class="eyebrow">Conversas</p>
             <h2>WhatsApp</h2>
           </div>
           <div class="view-actions">
@@ -700,6 +702,32 @@
         <div class="wpp-layout">
           <div class="wpp-list" id="wppList"></div>
           <div class="wpp-chat" id="wppChat"></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="intel">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Plano Inteligente</p>
+            <h2>Inteligência</h2>
+          </div>
+          <div class="view-actions">
+            <button class="btn-ghost" data-act="toast" data-msg="Análise das conversas de ontem reprocessada." type="button">Reprocessar</button>
+          </div>
+        </div>
+        <div id="intelContent"></div>
+      </section>
+
+      <section class="view" data-view="config">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Administração</p>
+            <h2>Configurações</h2>
+          </div>
+        </div>
+        <div class="cfg-layout">
+          <nav class="cfg-menu" id="cfgMenu"></nav>
+          <div id="cfgContent"></div>
         </div>
       </section>
 
@@ -1065,7 +1093,7 @@ function taskLate(t) { return t.status !== "concluida" && t.data < HOJE; }
 
 /* ============ estado ============ */
 var state = {
-  view: "resumo", fichaId: "c1", tab: "overview", wppSel: "c5",
+  view: "resumo", fichaId: "c1", tab: "overview", wppSel: "c5", cfg: "empresa",
   taskTab: "hoje", taskDia: null, cal: { y: 2026, m: 7 },
   msgIdx: 0,
   cli: { situ: "all", tipos: [], marca: "all", tMin: "", tMax: "", mMin: "", mMax: "", ord: "urgencia", busca: "", store: "all", page: 1, sel: {} }
@@ -1090,7 +1118,9 @@ var VIEWS = [
   { k: "laboratorio", titulo: "Laboratório",     icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>' },
   { k: "wpp",         titulo: "WhatsApp",        icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>' },
   { k: "automacoes",  titulo: "Automações",      icon: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>' },
-  { k: "relatorios",  titulo: "Relatórios",      icon: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>' }
+  { k: "relatorios",  titulo: "Relatórios",      icon: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>' },
+  { k: "intel",       titulo: "Inteligência",    icon: '<path d="M12 2a5 5 0 0 0-5 5c0 1.5.5 2.5 1.5 3.5S10 12.5 10 14h4c0-1.5.5-2.5 1.5-3.5S17 8.5 17 7a5 5 0 0 0-5-5z"/><path d="M10 17h4M10 20h4"/>', premium: true },
+  { k: "config",      titulo: "Configurações",   icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>' }
 ];
 
 function badgeCounts() {
@@ -1109,6 +1139,7 @@ function renderNav() {
     if (v.k === "movel" && b.movel) badge = '<span class="nav-count is-brandish">' + b.movel + "</span>";
     if (v.k === "laboratorio" && b.laboratorio) badge = '<span class="nav-count">' + b.laboratorio + "</span>";
     if (v.k === "wpp" && b.wpp) badge = '<span class="nav-count">' + b.wpp + "</span>";
+    if (v.premium) badge = '<span class="nav-count is-brandish" title="Recurso do plano Inteligente">PRO</span>';
     var ativa = state.view === v.k || (state.view === "ficha" && v.k === "clientes");
     return '<button class="nav-link' + (ativa ? " is-active" : "") + '" data-go="' + v.k + '" type="button">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + v.icon + "</svg>" + v.titulo + badge + "</button>";
@@ -1132,6 +1163,8 @@ function renderView(view) {
   else if (view === "ficha") renderFicha();
   else if (view === "movel") renderMovel();
   else if (view === "wpp") renderWpp();
+  else if (view === "intel") renderIntel();
+  else if (view === "config") renderConfig();
   else if (view === "laboratorio") renderLab();
   else if (view === "automacoes") renderRegras();
   else if (view === "relatorios") renderRelatorios();
@@ -1669,7 +1702,7 @@ function renderWpp() {
     '<div class="wpp-msgs" id="wppMsgs">' + cv.msgs.map(function (m) {
       return '<div class="bubble ' + m.de + '">' + esc(m.txt) + '<span class="b-meta">' + esc(m.h) + (m.de === "out" ? " · ✓✓" : "") + "</span></div>";
     }).join("") + "</div>" +
-    '<div class="wpp-ia"><span class="chip is-brand">IA</span><span style="flex:1;min-width:12rem;">' + esc(ia.resumo) + '</span>' +
+    '<div class="wpp-ia"><span class="chip is-brand">IA · Inteligência</span><span style="flex:1;min-width:12rem;">' + esc(ia.resumo) + '</span>' +
     '<button class="link-btn" data-act="wpp-sugerir" type="button">Usar resposta sugerida</button></div>' +
     '<form class="wpp-send" id="wppSendForm"><input id="wppInput" placeholder="Escreva a mensagem..." autocomplete="off">' +
     '<button class="btn" type="submit">Enviar</button></form>';
@@ -1682,6 +1715,155 @@ function renderWpp() {
     cv.naoLidas = 0;
     renderNav(); renderWpp();
   });
+}
+
+/* ============ inteligencia (plano superior) ============ */
+function renderIntel() {
+  var comportamento = [
+    { nome: "Camila",  resp: "11 min", tom: "Consultiva, usa áudio", forte: "Explica lente sem jargão", falha: "Esquece de pedir o fechamento", conv: 48 },
+    { nome: "Rafael",  resp: "58 min", tom: "Objetivo, só texto",     forte: "Rápido no orçamento",      falha: "Demora a responder de tarde", conv: 38 },
+    { nome: "Juliana", resp: "2h04",   tom: "Simpática, informal",     forte: "Boa no pós-venda",         falha: "Não retoma orçamento parado", conv: 33 }
+  ];
+  var licoes = [
+    "Quem recebe áudio explicando a lente fecha 2x mais que quem recebe só texto com o preço.",
+    "Orçamento retomado em até 48h converte 42%. Depois de 5 dias, cai para 11%.",
+    "Cliente que pergunta parcelamento está pronto para fechar: a objeção é forma de pagamento, não valor.",
+    "Multifocal premium não responde a desconto. Responde a condição e a prazo de entrega."
+  ];
+  $("#intelContent").innerHTML =
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Brief do dia · gerado às 6h</p><h3>O que a IA leu nas conversas de ontem</h3></div><span class="chip is-brand">37 conversas analisadas</span></div>' +
+    '<div style="display:flex;flex-direction:column;gap:.5rem;font-size:.86rem;">' +
+      '<div>1. <b>Nelson Vieira esquentou:</b> perguntou parcelamento e cor da armação no orçamento de R$ 1.890. É fechamento, responder antes das 10h.</div>' +
+      '<div>2. <b>Rogério Bastos cobrou a OS atrasada.</b> Responder antes de qualquer outra coisa e oferecer cortesia: risco de reclamação pública.</div>' +
+      '<div>3. <b>Ivone Cardoso travou no financeiro.</b> Não dar desconto: oferecer 12x começando mês que vem. O perfil dela fecha com condição, não com preço.</div>' +
+    "</div></section>" +
+
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Auditoria de atendimento</p><h3>Como cada uma atende</h3></div><span class="chip">últimos 30 dias</span></div>' +
+    '<div class="twrap"><table class="tbl"><thead><tr><th>Atendente</th><th>Resposta</th><th>Estilo</th><th>Ponto forte</th><th>A corrigir</th><th class="td-r">Conversão</th></tr></thead><tbody>' +
+    comportamento.map(function (v) {
+      return "<tr><td style='display:flex;align-items:center;gap:.5rem;'><span class='avatar'>" + iniciais(v.nome) + "</span>" + v.nome + "</td>" +
+        "<td class='num'>" + v.resp + "</td><td>" + v.tom + "</td><td>" + v.forte + "</td>" +
+        "<td style='color:var(--warn-ink)'>" + v.falha + "</td>" +
+        "<td class='td-r'><div style='display:flex;align-items:center;gap:.4rem;justify-content:flex-end;'><span class='num'>" + v.conv + "%</span><span class='minibar' style='width:52px'><i style='width:" + v.conv + "%'></i></span></div></td></tr>";
+    }).join("") + "</tbody></table></div></section>" +
+
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Aprendizado acumulado</p><h3>O que funciona nesta loja</h3></div></div>' +
+    '<div style="display:flex;flex-direction:column;gap:.5rem;">' +
+    licoes.map(function (l) { return '<div style="font-size:.85rem;display:flex;gap:.5rem;"><span style="color:var(--brand-ink);font-weight:700;">›</span><span>' + esc(l) + "</span></div>"; }).join("") +
+    "</div></section>" +
+
+    '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Pergunte ao sistema</p><h3>Consulta livre</h3></div></div>' +
+    '<form class="wpp-send" id="intelAskForm" style="margin:0;border:none;padding:0;">' +
+    '<input id="intelAsk" placeholder="Ex.: por que os orçamentos de multifocal não fecham?" autocomplete="off">' +
+    '<button class="btn" type="submit">Perguntar</button></form>' +
+    '<div id="intelAnswer" style="margin-top:.8rem;"></div></section>';
+
+  $("#intelAskForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var q = $("#intelAsk").value.trim();
+    if (!q) return;
+    $("#intelAnswer").innerHTML = '<div class="ai-block"><span class="ai-label">Resposta</span>' +
+      "<p>Nos últimos 30 dias, 61% dos orçamentos de multifocal que não fecharam tiveram a primeira objeção em <b>forma de pagamento</b>, não em preço. Nas conversas em que a vendedora ofereceu parcelamento antes do cliente perguntar, a conversão foi de 58% contra 31% da média.</p>" +
+      "<p><b>Sugestão:</b> incluir a condição de pagamento já na mensagem que envia o orçamento, com áudio explicando a diferença da lente.</p></div>";
+  });
+}
+
+/* ============ configuracoes ============ */
+var CFG_PAGES = [
+  { k: "empresa", label: "Empresa" },
+  { k: "equipe", label: "Usuários e equipe" },
+  { k: "permissoes", label: "Permissões" },
+  { k: "conta", label: "Plano e conta" },
+  { k: "dados", label: "Dados e privacidade" }
+];
+var USUARIOS = [
+  { nome: "Bless Ótica (admin)", email: "contato@blessotica.com.br", papel: "admin", ativo: true },
+  { nome: "Camila",  email: "camila@blessotica.com.br",  papel: "vendedor", ativo: true },
+  { nome: "Rafael",  email: "rafael@blessotica.com.br",  papel: "supervisor", ativo: true },
+  { nome: "Juliana", email: "juliana@blessotica.com.br", papel: "vendedor", ativo: true }
+];
+var PERMISSOES = {
+  "Ver clientes":            { supervisor: true,  vendedor: true },
+  "Editar clientes":         { supervisor: true,  vendedor: true },
+  "Excluir clientes":        { supervisor: true,  vendedor: false },
+  "Ver tarefas":             { supervisor: true,  vendedor: true },
+  "Criar e concluir tarefas":{ supervisor: true,  vendedor: true },
+  "Lançar compras":          { supervisor: true,  vendedor: true },
+  "Abrir ordem de serviço":  { supervisor: true,  vendedor: true },
+  "Ver relatórios":          { supervisor: true,  vendedor: false },
+  "Exportar dados":          { supervisor: true,  vendedor: false },
+  "Gerenciar usuários":      { supervisor: false, vendedor: false }
+};
+function renderConfig() {
+  if (!state.cfg) state.cfg = "empresa";
+  $("#cfgMenu").innerHTML = CFG_PAGES.map(function (p) {
+    return '<button class="cfg-item' + (state.cfg === p.k ? " is-active" : "") + '" data-act="cfg" data-p="' + p.k + '" type="button">' + p.label + "</button>";
+  }).join("");
+  var html = "";
+  if (state.cfg === "empresa") {
+    html = '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Identidade</p><h3>Empresa</h3></div></div>' +
+      '<div class="info-grid" style="margin-bottom:1rem;">' +
+      '<div class="info-item"><label>Nome</label><span>Bless Ótica</span></div>' +
+      '<div class="info-item"><label>CNPJ</label><span>—</span></div>' +
+      '<div class="info-item"><label>Endereço</label><span>Voluntários da Pátria, 1127A</span></div>' +
+      '<div class="info-item"><label>Telefone</label><span>(53) 99112-5608</span></div>' +
+      "</div>" +
+      '<p class="f-label">Cor da marca</p><div class="swatch-row">' +
+      ["#0d6157", "#1d4ed8", "#7c2d92", "#b45309"].map(function (c, i) {
+        return '<button class="swatch-big" data-brand="' + c + '" style="background:' + c + '" aria-pressed="' + (i === 0) + '" aria-label="Cor ' + (i + 1) + '"></button>';
+      }).join("") + "</div>" +
+      '<p class="muted" style="font-size:.8rem;margin-top:.8rem;">Muda a identidade do sistema inteiro para todos os usuários: tela de entrada, menu, botões e mensagens.</p></section>';
+  } else if (state.cfg === "equipe") {
+    html = '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Acessos</p><h3>Usuários e equipe</h3></div>' +
+      '<button class="btn" data-act="toast" data-msg="Convite enviado por e-mail. O usuário cria a própria senha." type="button">Novo usuário</button></div>' +
+      '<div class="twrap"><table class="tbl"><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>Situação</th><th>Ação</th></tr></thead><tbody>' +
+      USUARIOS.map(function (u, i) {
+        return "<tr><td class='cel-nome'>" + esc(u.nome) + "</td><td class='cel-sub'>" + esc(u.email) + "</td>" +
+          '<td><span class="role-pill role-' + u.papel + '">' + u.papel + "</span></td>" +
+          "<td>" + (u.ativo ? '<span class="chip is-ok">Ativo</span>' : '<span class="chip">Inativo</span>') + "</td>" +
+          '<td><button class="link-btn" data-act="user-toggle" data-i="' + i + '" type="button">' + (u.ativo ? "Desativar" : "Reativar") + "</button></td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      '<p class="muted" style="font-size:.8rem;margin-top:.8rem;">O plano contratado inclui <b>4 usuários</b>. Usuário desativado perde o acesso na hora, mas o histórico dele fica registrado.</p></section>';
+  } else if (state.cfg === "permissoes") {
+    html = '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Controle de acesso</p><h3>O que cada função pode fazer</h3></div><span class="chip">admin sempre tem tudo</span></div>' +
+      '<div class="twrap"><table class="tbl perm-table"><thead><tr><th>Permissão</th><th style="text-align:center">Supervisor</th><th style="text-align:center">Vendedor</th></tr></thead><tbody>' +
+      Object.keys(PERMISSOES).map(function (k) {
+        var p = PERMISSOES[k];
+        return "<tr><td>" + k + "</td>" +
+          '<td style="text-align:center"><input class="perm-check" type="checkbox" data-act="perm" data-k="' + esc(k) + '" data-r="supervisor"' + (p.supervisor ? " checked" : "") + ' aria-label="' + esc(k) + ' supervisor"></td>' +
+          '<td style="text-align:center"><input class="perm-check" type="checkbox" data-act="perm" data-k="' + esc(k) + '" data-r="vendedor"' + (p.vendedor ? " checked" : "") + ' aria-label="' + esc(k) + ' vendedor"></td></tr>';
+      }).join("") + "</tbody></table></div>" +
+      '<p class="muted" style="font-size:.8rem;margin-top:.8rem;">A regra vale no servidor, não só na tela: quem não tem a permissão não consegue acessar nem digitando o endereço direto.</p></section>';
+  } else if (state.cfg === "conta") {
+    html = '<section class="panel"><div class="panel-head"><div><p class="eyebrow">Assinatura</p><h3>Plano e conta</h3></div><span class="chip is-brand">Avaliação · 7 dias</span></div>' +
+      '<div class="kpi-band" style="margin:0 0 1rem;">' +
+      '<div class="kpi-tile"><span class="k-label">Plano</span><span class="k-val" style="font-size:1.2rem;">Básico</span><span></span><span class="k-delta flat">até 4 usuários</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Usuários em uso</span><span class="k-val">4 de 4</span><span></span><span class="k-delta flat">admin, supervisor e 2 vendedores</span></div>' +
+      '<div class="kpi-tile"><span class="k-label">Clientes na base</span><span class="k-val">' + CLIENTES.length + '</span><span></span><span class="k-delta flat">sem limite no plano</span></div>' +
+      "</div>" +
+      '<div class="twrap"><table class="tbl"><thead><tr><th>Recurso</th><th style="text-align:center">Básico</th><th style="text-align:center">Inteligente</th></tr></thead><tbody>' +
+      [["Clientes, janela de troca e recompra", 1, 1], ["Tarefas e agendamento", 1, 1], ["Ordens de serviço e laboratório", 1, 1],
+       ["WhatsApp e modelos de mensagem", 1, 1], ["Automações e relatórios", 1, 1], ["Integração com o ssOtica", 1, 1],
+       ["Análise diária das conversas", 0, 1], ["Brief do dia para o dono", 0, 1], ["Auditoria de atendimento por vendedora", 0, 1],
+       ["Sugestão de resposta e consulta livre", 0, 1]].map(function (r) {
+        var ic = function (v) { return v ? '<span style="color:var(--ok-ink);font-weight:700;">✓</span>' : '<span class="muted">—</span>'; };
+        return "<tr><td>" + r[0] + '</td><td style="text-align:center">' + ic(r[1]) + '</td><td style="text-align:center">' + ic(r[2]) + "</td></tr>";
+      }).join("") + "</tbody></table></div></section>";
+  } else {
+    html = '<section class="panel"><div class="panel-head"><div><p class="eyebrow">LGPD</p><h3>Dados e privacidade</h3></div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:.7rem;font-size:.86rem;">' +
+      "<div><b>Onde ficam os dados:</b> servidor no Brasil ou nos EUA (a definir com você), banco exclusivo desta loja. Nenhum dado da Bless divide espaço com outro cliente.</div>" +
+      "<div><b>O que NÃO guardamos:</b> grau, receita e qualquer informação de saúde ocular. São dados sensíveis pela LGPD e ficam fora do sistema por decisão de projeto.</div>" +
+      "<div><b>Backup:</b> diário automático, com cópia fora do servidor principal.</div>" +
+      "<div><b>Registro de ações:</b> tudo que cada usuário faz fica gravado (quem alterou, o quê e quando).</div>" +
+      "</div>" +
+      '<div class="toolbar" style="margin-top:1rem;">' +
+      '<button class="btn-ghost" data-act="toast" data-msg="Dados do cliente exportados em Excel (direito de portabilidade)." type="button">Exportar dados de um cliente</button>' +
+      '<button class="btn-ghost" data-act="toast" data-msg="Exclusão definitiva registrada: o cadastro sai do banco e dos backups no próximo ciclo." type="button">Excluir definitivamente um cliente</button>' +
+      "</div>" +
+      '<p class="muted" style="font-size:.8rem;margin-top:.7rem;">Atende aos direitos do titular previstos na LGPD: acesso, portabilidade e eliminação.</p></section>';
+  }
+  $("#cfgContent").innerHTML = html;
 }
 
 /* ============ laboratorio ============ */
@@ -1952,6 +2134,17 @@ document.addEventListener("click", function (ev) {
     renderNav(); renderLab();
   }
   else if (act === "pal-task") { fecharDialogs(); go("tarefas"); }
+  else if (act === "cfg") { state.cfg = el.dataset.p; renderConfig(); }
+  else if (act === "user-toggle") {
+    var u = USUARIOS[Number(el.dataset.i)];
+    u.ativo = !u.ativo;
+    toast(u.ativo ? u.nome + " reativado." : u.nome + " desativado: acesso bloqueado na hora.");
+    renderConfig();
+  }
+  else if (act === "perm") {
+    PERMISSOES[el.dataset.k][el.dataset.r] = el.checked;
+    toast("Permissão atualizada para " + el.dataset.r + ".");
+  }
   else if (act === "wpp-abrir") {
     state.wppSel = el.dataset.id;
     CONVERSAS.forEach(function (cv) { if (cv.cid === state.wppSel) cv.naoLidas = 0; });
