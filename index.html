@@ -435,6 +435,42 @@
   .toast.warn { border-left: 3px solid var(--warn); }
   @keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+  /* ---------- ajuda contextual (?) ---------- */
+  .helpdot {
+    display: inline-grid; place-items: center; width: 15px; height: 15px; flex: none;
+    border-radius: 50%; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--muted-soft); font-size: .62rem; font-weight: 700; cursor: help;
+    padding: 0; margin-left: .3rem; position: relative; vertical-align: middle; line-height: 1;
+  }
+  .helpdot:hover, .helpdot.is-open { border-color: var(--brand); color: var(--brand-ink); }
+  .helptip {
+    display: none; position: absolute; z-index: 70; left: 50%; bottom: calc(100% + 8px);
+    transform: translateX(-50%); width: 17rem; max-width: 76vw;
+    background: var(--text); color: var(--bg); font-size: .76rem; font-weight: 500;
+    line-height: 1.5; text-align: left; padding: .6rem .75rem; border-radius: var(--r-md);
+    box-shadow: var(--shadow); cursor: auto;
+  }
+  .helptip::after {
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: var(--text);
+  }
+  .helpdot:hover .helptip, .helpdot.is-open .helptip { display: block; }
+  .helptip b { color: var(--bg); }
+
+  /* ---------- tour do primeiro acesso ---------- */
+  .tour-back { position: fixed; inset: 0; background: rgba(5,7,10,.62); z-index: 150; }
+  .tour-back[hidden] { display: none; }
+  .tour-card {
+    position: fixed; z-index: 160; width: 20rem; max-width: calc(100vw - 2rem);
+    background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-lg);
+    box-shadow: var(--shadow); padding: 1.1rem 1.15rem; display: flex; flex-direction: column; gap: .6rem;
+  }
+  .tour-card h4 { font-size: 1rem; }
+  .tour-card p { font-size: .85rem; color: var(--muted); }
+  .tour-foot { display: flex; align-items: center; gap: .5rem; margin-top: .2rem; }
+  .tour-step { font-family: var(--mono); font-size: .7rem; color: var(--muted-soft); margin-right: auto; }
+  .tour-alvo { position: relative; z-index: 155; box-shadow: 0 0 0 3px var(--brand), 0 0 0 12px rgba(0,0,0,.25); border-radius: var(--r-md); }
+
   /* ---------- portao de avaliacao (7 dias) ---------- */
   .gate {
     position: fixed; inset: 0; z-index: 200;
@@ -482,6 +518,7 @@
   <span>Ambiente de avaliação com dados fictícios</span>
   <span class="chip is-brand" id="trialChip" hidden style="background:rgba(255,255,255,.12);color:#dfe3ea;"></span>
   <span class="spacer"></span>
+  <button class="db-btn" id="tourBtn" type="button">Como usar</button>
   <span class="swatches" title="Cor da marca">
     <button class="swatch" data-brand="#0d6157" style="background:#0d6157" aria-pressed="true" aria-label="Verde petróleo"></button>
     <button class="swatch" data-brand="#1d4ed8" style="background:#1d4ed8" aria-pressed="false" aria-label="Azul"></button>
@@ -679,7 +716,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Telemarketing e visitas</p>
-            <h2>Agendamento</h2>
+            <h2>Agendamento <span id="hAgend"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="toast" data-msg="Script de ligação aberto (recurso da versão final)." type="button">Scripts de ligação</button>
@@ -709,7 +746,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Plano Inteligente</p>
-            <h2>Inteligência</h2>
+            <h2>Inteligência <span id="hIntel"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="toast" data-msg="Análise das conversas de ontem reprocessada." type="button">Reprocessar</button>
@@ -751,7 +788,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Réguas de contato</p>
-            <h2>Automações</h2>
+            <h2>Automações <span id="hAuto"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn" data-act="nova-regra" type="button">Nova regra</button>
@@ -908,6 +945,17 @@
   </form>
 </dialog>
 
+<div class="tour-back" id="tourBack" hidden></div>
+<div class="tour-card" id="tourCard" hidden>
+  <h4 id="tourTitulo"></h4>
+  <p id="tourTexto"></p>
+  <div class="tour-foot">
+    <span class="tour-step" id="tourPasso"></span>
+    <button class="btn-ghost" id="tourPular" type="button">Pular</button>
+    <button class="btn" id="tourProx" type="button">Próximo</button>
+  </div>
+</div>
+
 <div id="toasts" role="status" aria-live="polite"></div>
 
 <!-- portao de avaliacao -->
@@ -1028,6 +1076,30 @@ var REGRAS = [
   { id:"r7", quando:"30 dias antes",           acao:"Aviso de garantia prestes a vencer", ativa:true },
   { id:"r8", quando:"sazonal (verão)",         acao:"Solar com grau para quem não tem segundo par", ativa:false }
 ];
+
+/* ============ ajuda contextual ============ */
+/* Explica o VALOR de cada coisa, não o botão. Quem lê é o dono da ótica
+   navegando sozinho, não um usuário treinado. */
+var AJUDA = {
+  janela: "Tempo que a pessoa costuma levar para trocar de óculos: 18 meses em multifocal e ocupacional, 24 em monofocal e solar. Passou disso e não voltou, ela provavelmente comprou em outro lugar. <b>É o número que mais dá dinheiro nesta tela.</b>",
+  orcamento: "Orçamento que saiu da loja e não fechou. Retomado em até 48h, converte cerca de 42%; depois de 5 dias, cai para 11%. <b>Aqui é dinheiro que já estava na mão.</b>",
+  laboratorio: "Acompanha o prazo que o laboratório prometeu. Quando atrasa, o cliente é avisado antes de ligar cobrando: é o que separa um transtorno de uma reclamação pública.",
+  garantia: "Data em que a garantia da lente vence. Serve para dois fins: cumprir o que foi prometido e criar um motivo honesto de contato antes da troca.",
+  segundopar: "Cliente que só tem um par. Vender o solar com grau para quem já confia na loja é a venda mais barata que existe, porque não precisa conquistar ninguém de novo.",
+  agendamento: "A fila de quem o telemarketing deve ligar hoje, montada pela base e não pela memória de alguém. A ligação vira visita marcada, que preenche os horários vazios da loja.",
+  inteligencia: "Recurso do plano superior: o sistema lê as conversas do WhatsApp toda madrugada e entrega o resumo do dia, o que cada cliente precisa e como cada vendedora está atendendo.",
+  recompra: "De cada 100 clientes que já compraram, quantos voltaram. É o placar do negócio: todo o resto do sistema existe para mover este número.",
+  ticket: "Valor médio de cada venda. Serve para ver se a loja está vendendo mais premium ou se está dando desconto sem perceber.",
+  automacoes: "As mensagens que saem sozinhas, no prazo certo. Configurar uma vez substitui lembrar todo dia.",
+  ficha: "Tudo sobre a pessoa numa tela só: o que comprou, quando, qual lente, garantia, conversas e o que fazer agora.",
+  permissoes: "Define o que cada função enxerga e faz. A regra vale no servidor, então ninguém contorna sabendo o endereço.",
+  planos: "O básico cobre a operação inteira da loja. O Inteligente acrescenta a leitura diária das conversas e a auditoria de atendimento."
+};
+function ajuda(chave) {
+  if (!AJUDA[chave]) return "";
+  return '<button class="helpdot" type="button" data-ajuda="' + chave + '" aria-label="O que é isto?">?' +
+    '<span class="helptip">' + AJUDA[chave] + "</span></button>";
+}
 
 /* ============ utilitarios ============ */
 function $(s, el) { return (el || document).querySelector(s); }
@@ -1239,32 +1311,32 @@ function renderResumo() {
   var ic = function (path) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + path + "</svg>"; };
 
   $("#summaryGrid").innerHTML =
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>') + 'Janela de troca</h4><span class="chip is-danger">' + r.vencidos.length + ' vencidos</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>') + 'Janela de troca' + ajuda('janela') + '</h4><span class="chip is-danger">' + r.vencidos.length + ' vencidos</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="janela" type="button">Na janela <strong>' + r.janela.length + '</strong></button><button class="s-mini" data-act="filtro-rapido" data-f="vencidos" type="button">Vencidos <strong>' + r.vencidos.length + "</strong></button></div>" +
     '<div class="s-list">' + linhas(r.vencidos, function (c) { return lc(c, c._e.janela.label.toLowerCase()); }) + "</div>" +
     '<div class="s-foot">Recompra</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>') + 'Orçamentos</h4><span class="chip is-warn">' + r.orc.length + ' abertos</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>') + 'Orçamentos' + ajuda('orcamento') + '</h4><span class="chip is-warn">' + r.orc.length + ' abertos</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="orc" type="button">Sem retorno 48h <strong>' + r.orc48.length + "</strong></button></div>" +
     '<div class="s-list">' + linhas(r.orc, function (c) { return lc(c, brl(c.orcamento.valor) + " há " + c._e.orcDias + "d"); }) + "</div>" +
     '<div class="s-foot">Conversão</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>') + 'Laboratório</h4><span class="chip ' + (r.osAtrasadas.length ? "is-danger" : "is-ok") + '">' + (r.osAtrasadas.length ? r.osAtrasadas.length + " atrasada" : "em dia") + '</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>') + 'Laboratório' + ajuda('laboratorio') + '</h4><span class="chip ' + (r.osAtrasadas.length ? "is-danger" : "is-ok") + '">' + (r.osAtrasadas.length ? r.osAtrasadas.length + " atrasada" : "em dia") + '</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-go="laboratorio" type="button">Em aberto <strong>' + r.osAbertas.length + "</strong></button></div>" +
     '<div class="s-list">' + r.osAbertas.slice(0, 3).map(function (o) { var s = osStatus(o); return '<button class="s-line" data-go="laboratorio" type="button">OS ' + o.n + " · " + esc(nomeDe(o.cid)) + " · " + s.label.toLowerCase() + "</button>"; }).join("") + "</div>" +
     '<div class="s-foot">Produção</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>') + 'Garantia</h4><span class="chip is-warn">' + r.gar30.length + ' vencendo</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>') + 'Garantia' + ajuda('garantia') + '</h4><span class="chip is-warn">' + r.gar30.length + ' vencendo</span></div>' +
     '<div class="s-badges"><span class="s-mini">Expiradas <strong>' + r.garVenc.length + "</strong></span></div>" +
     '<div class="s-list">' + linhas(r.gar30.concat(r.garVenc), function (c) { return lc(c, c._e.gar.label.toLowerCase()); }) + "</div>" +
     '<div class="s-foot">Pós-venda</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="3"/><path d="M3 12c2.5-5 6-7 9-7s6.5 2 9 7c-2.5 5-6 7-9 7s-6.5-2-9-7z"/>') + 'Segundo par</h4><span class="chip is-info">oportunidade</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<circle cx="12" cy="12" r="3"/><path d="M3 12c2.5-5 6-7 9-7s6.5 2 9 7c-2.5 5-6 7-9 7s-6.5-2-9-7z"/>') + 'Segundo par' + ajuda('segundopar') + '</h4><span class="chip is-info">oportunidade</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-act="filtro-rapido" data-f="sempar" type="button">Só um par <strong>' + r.semPar.length + '</strong></button><span class="s-mini">Multifocal sem solar <strong>' + r.multiSemSolar.length + "</strong></span></div>" +
     '<div class="s-list">' + linhas(r.multiSemSolar, function (c) { return lc(c, "ticket " + brl(c._e.ticket)); }) + "</div>" +
     '<div class="s-foot">Anexação</div></article>' +
 
-    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>') + 'Agendamento</h4><span class="chip is-brand">' + b.movel + ' na agenda</span></div>' +
+    '<article class="s-card"><div class="s-head"><h4>' + ic('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>') + 'Agendamento' + ajuda('agendamento') + '</h4><span class="chip is-brand">' + b.movel + ' na agenda</span></div>' +
     '<div class="s-badges"><button class="s-mini" data-go="movel" type="button">Fila de ligações <strong>' + r.vencidos.length + "</strong></button></div>" +
     '<div class="s-list">' + TAREFAS.filter(function (t) { return (t.tipo === "Agendamento" || t.tipo === "Ligação") && t.status !== "concluida"; }).slice(0, 3).map(function (t) { return '<button class="s-line" data-go="movel" type="button">' + dtBR(t.data).slice(0, 5) + " " + t.hora + " · " + esc(t.titulo) + "</button>"; }).join("") + "</div>" +
     '<div class="s-foot">Telemarketing</div></article>' +
@@ -1996,6 +2068,17 @@ function abrirZap(c, texto) {
 function fecharDialogs() { $$("dialog[open]").forEach(function (d) { d.close(); }); }
 
 document.addEventListener("click", function (ev) {
+  /* "?" abre no toque; no desktop o hover já mostra. Fecha os outros. */
+  var dot = ev.target.closest(".helpdot");
+  if (dot) {
+    ev.stopPropagation();
+    var abrindo = !dot.classList.contains("is-open");
+    $$(".helpdot.is-open").forEach(function (d) { d.classList.remove("is-open"); });
+    if (abrindo) dot.classList.add("is-open");
+    return;
+  }
+  $$(".helpdot.is-open").forEach(function (d) { d.classList.remove("is-open"); });
+
   var el = ev.target.closest("[data-go],[data-ficha],[data-act],[data-zap],[data-close],[data-brand]");
   if (!el) {
     var row = ev.target.closest("tr[data-frow]");
@@ -2237,6 +2320,70 @@ try { var temaSalvo = sessionStorage.getItem("tema"); if (temaSalvo) document.do
 $("#calPrev").addEventListener("click", function () { state.cal.m--; if (state.cal.m < 0) { state.cal.m = 11; state.cal.y--; } renderCal(); });
 $("#calNext").addEventListener("click", function () { state.cal.m++; if (state.cal.m > 11) { state.cal.m = 0; state.cal.y++; } renderCal(); });
 
+/* ── tour do primeiro acesso ──────────────────────────────────────────
+   Curto de propósito: 4 passos. Tour longo é fechado no segundo clique e
+   ninguém lê. O que ficar de fora, o "?" explica no momento certo. */
+var TOUR = [
+  { alvo: "#mainNav", ir: "resumo", titulo: "Este é o seu sistema",
+    texto: "Cada item aqui é uma área da ótica: quem precisa voltar, o que está no laboratório, quem ligar hoje. Os números vermelhos são coisas pedindo atenção." },
+  { alvo: "#focusStrip", ir: "resumo", titulo: "O sistema já sabe quem chamar",
+    texto: "Ele varre a base sozinho e separa quem passou do tempo de trocar de óculos. Esse valor é o que está parado esperando um telefonema." },
+  { alvo: "#kpiBand", ir: "resumo", titulo: "Números que hoje ninguém mede",
+    texto: "Taxa de recompra, base vencida, orçamento parado e ticket médio. É a diferença entre achar que o mês foi fraco e saber o motivo." },
+  { alvo: '[data-go="movel"]', ir: "resumo", titulo: "E a fila de ligações",
+    texto: "Em Agendamento fica a lista de quem o telemarketing deve chamar hoje, na ordem da urgência. A ligação vira visita marcada na loja.<br><br>Passeie à vontade: os dados são fictícios, nada aqui quebra. O <b>?</b> ao lado dos títulos explica cada coisa." }
+];
+var tourIdx = 0;
+function tourMostrar() {
+  var passo = TOUR[tourIdx];
+  if (!passo) return tourFim();
+  if (passo.ir && state.view !== passo.ir) go(passo.ir);
+  $$(".tour-alvo").forEach(function (e) { e.classList.remove("tour-alvo"); });
+  var alvo = document.querySelector(passo.alvo);
+  var card = $("#tourCard");
+  $("#tourTitulo").textContent = passo.titulo;
+  $("#tourTexto").innerHTML = passo.texto;
+  $("#tourPasso").textContent = (tourIdx + 1) + " de " + TOUR.length;
+  $("#tourProx").textContent = tourIdx === TOUR.length - 1 ? "Começar" : "Próximo";
+  $("#tourBack").hidden = false;
+  card.hidden = false;
+
+  if (alvo) {
+    alvo.classList.add("tour-alvo");
+    try { alvo.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+  }
+  /* posiciona o cartão perto do alvo, sem sair da tela */
+  setTimeout(function () {
+    var cw = card.offsetWidth, ch = card.offsetHeight;
+    var esq = Math.max(12, (window.innerWidth - cw) / 2);
+    var topo = Math.max(12, (window.innerHeight - ch) / 2);
+    if (alvo) {
+      var r = alvo.getBoundingClientRect();
+      var abaixo = r.bottom + 14;
+      topo = (abaixo + ch < window.innerHeight - 12) ? abaixo : Math.max(12, r.top - ch - 14);
+      esq = Math.min(Math.max(12, r.left), window.innerWidth - cw - 12);
+    }
+    card.style.left = esq + "px";
+    card.style.top = topo + "px";
+  }, 260);
+}
+function tourFim() {
+  $$(".tour-alvo").forEach(function (e) { e.classList.remove("tour-alvo"); });
+  $("#tourBack").hidden = true;
+  $("#tourCard").hidden = true;
+  try { localStorage.setItem("bless_tour_visto", "1"); } catch (e) {}
+}
+$("#tourProx").addEventListener("click", function () { tourIdx++; tourIdx < TOUR.length ? tourMostrar() : tourFim(); });
+$("#tourPular").addEventListener("click", tourFim);
+$("#tourBack").addEventListener("click", tourFim);
+function tourIniciar(forcar) {
+  var visto = false;
+  try { visto = localStorage.getItem("bless_tour_visto") === "1"; } catch (e) {}
+  if (visto && !forcar) return;
+  tourIdx = 0;
+  setTimeout(tourMostrar, 400);
+}
+
 /* ── portao de avaliacao: 7 dias a partir do primeiro acesso ── */
 (function () {
   var CODIGO = "BLESS7";
@@ -2269,9 +2416,22 @@ $("#calNext").addEventListener("click", function () { state.cal.m++; if (state.c
     $("#gateErr").hidden = true;
     aplicar();
     toast("Bem-vindo! Avaliação de 7 dias liberada.");
+    tourIniciar(true);
   });
   aplicar();
+  /* Só oferece o tour quando o acesso já está liberado (nem portão nem expirado). */
+  if (gate.hidden && gateExp.hidden) tourIniciar(false);
 })();
+
+/* "Como usar": refaz o tour a qualquer momento */
+$("#tourBtn").addEventListener("click", function () { tourIniciar(true); });
+
+/* ajuda nos títulos fixos */
+try {
+  $("#hAgend").innerHTML = ajuda("agendamento");
+  $("#hIntel").innerHTML = ajuda("inteligencia");
+  $("#hAuto").innerHTML = ajuda("automacoes");
+} catch (e) {}
 
 /* boot */
 renderNav();
