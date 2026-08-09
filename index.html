@@ -78,6 +78,10 @@
   }
 
   * { box-sizing: border-box; }
+  /* O atributo hidden só vale via UA stylesheet e PERDE para qualquer
+     display do autor (.tour-card{display:flex} etc). Sem esta linha, o
+     cartão do tour não fechava no último passo. */
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14.5px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
   h1,h2,h3,h4 { font-family: var(--display); margin: 0; font-weight: 700; letter-spacing: -0.015em; }
   p { margin: 0; }
@@ -596,7 +600,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Agenda</p>
-            <h2>Tarefas</h2>
+            <h2>Tarefas <span id="hTarefas"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn" data-act="nova-tarefa" type="button">Nova tarefa</button>
@@ -628,7 +632,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Base</p>
-            <h2>Clientes <span class="chip" id="cliCount"></span> <span class="chip is-ok" title="No plano real, a base é lida do seu ssOtica automaticamente">ssOtica · sincronizado há 2h</span></h2>
+            <h2>Clientes <span id="hClientes"></span> <span class="chip" id="cliCount"></span> <span class="chip is-ok" title="No plano real, a base é lida do seu ssOtica automaticamente">ssOtica · sincronizado há 2h</span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="csv-clientes" type="button">Exportar Excel</button>
@@ -644,7 +648,7 @@
           <div class="filter-panel" id="filterPanel">
             <div class="filter-grid">
               <div class="fg-wide">
-                <span class="f-label">Situação</span>
+                <span class="f-label">Situação <span id="hFiltros"></span></span>
                 <div class="fchips" id="situChips"></div>
               </div>
               <div class="fg-wide">
@@ -730,7 +734,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Conversas</p>
-            <h2>WhatsApp</h2>
+            <h2>WhatsApp <span id="hWpp"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="toast" data-msg="Biblioteca de modelos aberta (revisão, orçamento, aniversário, atraso de OS)." type="button">Modelos</button>
@@ -759,7 +763,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Administração</p>
-            <h2>Configurações</h2>
+            <h2>Configurações <span id="hCfg"></span></h2>
           </div>
         </div>
         <div class="cfg-layout">
@@ -772,7 +776,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Produção</p>
-            <h2>Laboratório</h2>
+            <h2>Laboratório <span id="hLab"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn" data-act="nova-os" type="button">Abrir OS</button>
@@ -804,7 +808,7 @@
         <div class="view-head">
           <div>
             <p class="eyebrow">Indicadores</p>
-            <h2>Relatórios</h2>
+            <h2>Relatórios <span id="hRel"></span></h2>
           </div>
           <div class="view-actions">
             <button class="btn-ghost" data-act="csv-relatorio" type="button">Exportar Excel</button>
@@ -1093,7 +1097,21 @@ var AJUDA = {
   automacoes: "As mensagens que saem sozinhas, no prazo certo. Configurar uma vez substitui lembrar todo dia.",
   ficha: "Tudo sobre a pessoa numa tela só: o que comprou, quando, qual lente, garantia, conversas e o que fazer agora.",
   permissoes: "Define o que cada função enxerga e faz. A regra vale no servidor, então ninguém contorna sabendo o endereço.",
-  planos: "O básico cobre a operação inteira da loja. O Inteligente acrescenta a leitura diária das conversas e a auditoria de atendimento."
+  planos: "O básico cobre a operação inteira da loja. O Inteligente acrescenta a leitura diária das conversas e a auditoria de atendimento.",
+  tarefas: "A agenda de quem faz o quê e até quando. Nasce sozinha das regras (retorno de orçamento, conferência de adaptação, aviso de garantia) e o que estiver em vermelho passou do prazo. <b>Serve para cobrar sem precisar ficar em cima.</b>",
+  calendario: "Os compromissos do mês. O ponto vermelho marca dia com tarefa atrasada. Clique num dia para ver só o que é dele.",
+  clientes: "A base inteira da loja num lugar só, com o histórico de cada pessoa. As colunas foram escolhidas para responder uma pergunta: <b>com quem eu falo agora e por quê.</b>",
+  filtros: "Recortes prontos da base. O mais usado é <b>Vencidos</b>: gera na hora a lista de quem já passou do tempo de trocar. É a lista de ligação de um dia fraco.",
+  colunaJanela: "Mostra há quanto tempo a pessoa passou do ponto de troca, ou quanto falta. Vermelho é oportunidade perdida esfriando.",
+  colunaGarantia: "Até quando a lente está coberta. Vencendo é motivo de contato; expirada costuma vir junto com janela vencida.",
+  whatsapp: "As conversas dentro do próprio sistema, ligadas à ficha de cada cliente. Quem atende vê o histórico de compras enquanto responde, sem trocar de tela nem procurar no celular.",
+  modelos: "Mensagens prontas para as situações que se repetem: convite de revisão, retorno de orçamento, aviso de atraso, aniversário. A pessoa edita antes de enviar, então não soa robô.",
+  os: "Cada óculos que foi para o laboratório, com a data prometida. É o painel que evita a pergunta 'meu óculos chegou?' virar reclamação.",
+  relatorios: "O retrato do negócio: quanto da base voltou, quanto do orçamento virou venda e como está o prazo de entrega. <b>São números que a ótica normalmente não consegue medir.</b>",
+  basegrafico: "Divide os clientes entre em dia, entrando na janela de troca e vencidos. Hoje essa conta não existe na loja, e é a primeira coisa que o sistema entrega.",
+  usuarios: "Quem tem acesso ao sistema e com qual função. Desativar corta o acesso na hora, e o histórico do que a pessoa fez continua registrado.",
+  empresa: "Nome, dados e cor da marca. Muda a identidade do sistema inteiro, para todos os usuários.",
+  privacidade: "Atende pedidos de cliente sobre os próprios dados: entregar uma cópia ou apagar tudo. Grau e receita nem entram no sistema, por serem dado de saúde."
 };
 function ajuda(chave) {
   if (!AJUDA[chave]) return "";
@@ -1530,8 +1548,8 @@ function renderClientes() {
   $("#cliTableWrap").innerHTML = '<table class="tbl" style="min-width:56rem"><thead><tr>' +
     "<th></th><th>Nome</th><th>Contato</th><th>Lente</th>" +
     '<th><button class="th-sort" data-act="ord" data-s="ult" type="button">Últ. compra ' + (f.ord === "ult" ? "↓" : "↕") + "</button></th>" +
-    '<th><button class="th-sort" data-act="ord" data-s="urgencia" type="button">Janela ' + (f.ord === "urgencia" ? "↓" : "↕") + "</button></th>" +
-    "<th>Garantia</th>" +
+    '<th><button class="th-sort" data-act="ord" data-s="urgencia" type="button">Janela ' + (f.ord === "urgencia" ? "↓" : "↕") + "</button>" + ajuda("colunaJanela") + "</th>" +
+    "<th>Garantia" + ajuda("colunaGarantia") + "</th>" +
     '<th class="td-r"><button class="th-sort" data-act="ord" data-s="ticket" type="button">Ticket ' + (f.ord === "ticket" ? "↓" : "↕") + "</button></th>" +
     "<th>Resp.</th><th>Ação</th></tr></thead><tbody>" +
     (rows || '<tr><td colspan="10" class="muted" style="padding:1rem;">Nenhum cliente neste recorte. Limpe os filtros.</td></tr>') + "</tbody></table>";
@@ -2431,6 +2449,13 @@ try {
   $("#hAgend").innerHTML = ajuda("agendamento");
   $("#hIntel").innerHTML = ajuda("inteligencia");
   $("#hAuto").innerHTML = ajuda("automacoes");
+  $("#hTarefas").innerHTML = ajuda("tarefas");
+  $("#hClientes").innerHTML = ajuda("clientes");
+  $("#hWpp").innerHTML = ajuda("whatsapp");
+  $("#hLab").innerHTML = ajuda("os");
+  $("#hRel").innerHTML = ajuda("relatorios");
+  $("#hCfg").innerHTML = ajuda("privacidade");
+  $("#hFiltros").innerHTML = ajuda("filtros");
 } catch (e) {}
 
 /* boot */
